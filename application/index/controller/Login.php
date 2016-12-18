@@ -11,19 +11,27 @@ class Login extends Controller{
       //return $this->fetch('login');
   }
 
-  public function toLogin(){
+  public function toLogin(){  
     $name = input('request.username');
     $password  = input('request.password');
+    if(empty($name) || empty($password)){
+      $data['code'] = -1;
+      $data['msg']  = '用户名或者密码不能为空';
+      return json();
+    }
     //$name = Request::instance()->get('name');
     // $data = input('request.captcha');
     // if(!captcha_check($data)){
     //     return $this->error("验证码错误","location:/login");
     // };
-    $check=\app\index\model\User::login($name, $password);
-    if ($check) {
+    $info=\app\index\model\User::login($name, $password);
+    if ($info) {
       $data['code'] = 1;
+      $data['msg']  = '登录成功';
+      $data['data'] = $info;
     }else{
       $data['code'] = 0;
+      $data['msg']  = '用户名或者密码错误';
     }
     return json($data);
   }

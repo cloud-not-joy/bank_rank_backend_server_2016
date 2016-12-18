@@ -11,11 +11,18 @@ class User extends \think\Model{
         $where['password'] = md5($password);
 
         $user=User::where($where)->find()->toArray();
-
+        $role = $user['role'] ;
+        if($role == 1){
+            $user['role'] = '超级管理员';
+        } else if($role == 2){
+            $user['role'] = '管理员';
+        } else {
+            $user['role'] = '员工';
+        }
         if ($user) {
             unset($user["password"]);
             session("ext_user", $user);
-            return true;
+            return $user;
         }else{
             return false;
         }
@@ -40,7 +47,7 @@ class User extends \think\Model{
     public static function addStaffInfo($param){
         $user = new User($param);
         $user->save();
-        return $user->$user_id;
+        return $user->user_id;
     }
 
     /*退出登录*/
@@ -50,9 +57,12 @@ class User extends \think\Model{
     }
 
     /*查询一条数据*/
-    public static function search($name){
+    public static function searchOne($name){
         $where['username'] = $name;
-        $user=User::where($where)->find();
+        $user=User::field('accumulate,consume')->where($where)->find();
+        if(!empty($user)){
+            $user = $user->toArray();
+        }
         return $user;
     }
 

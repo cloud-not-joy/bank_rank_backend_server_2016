@@ -15,6 +15,23 @@ class User extends Controller{
        return $this->fetch(); 
     }
     /**
+     * [getOneInfo 获取登录用户的基本信息]
+     * @return [type] [description]
+     */
+    public function getOneInfo(){
+      //$username = input('request.username');
+      $username = Session::get('ext_user.username');
+
+      if(is_numeric($username) || empty($username)){
+        $data['code'] = -1;
+        $data['msg']  = '请传正确的员工标识';
+      }
+      $integral = \app\index\model\User::searchOne($username);
+      $info = \app\index\model\StaffInfo::searchOne($username);
+      $res = array_merge($info,$integral);
+      return json($res);
+    }
+    /**
      * [addUser 超级管理员添加管理员]
      */
     public function addUser(){
@@ -58,7 +75,7 @@ class User extends Controller{
       return json($data);
     }
 
-  
+
 
     
 }
