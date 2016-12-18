@@ -7,29 +7,86 @@ use think\Session;
 
 class Gift extends Controller{
 	/**
-	 * [addGift  添加礼物]
+	 * [giftList 礼品列表]
+	 * @return [type] [description]
 	 */
-	public function addGift(){
-		echo "11";
+	public function giftList(){
+		
 
 	}
-	public function upload(){
-	    // 获取表单上传文件 例如上传了001.jpg
-	    $file = request()->file('image');
-	    // 移动到框架应用根目录/public/uploads/ 目录下
-	    $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
-	    if($info){
-	        // 成功上传后 获取上传信息
-	        // 输出 jpg
-	        echo $info->getExtension();
-	        // 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
-	        echo $info->getSaveName();
-	        // 输出 42a79759f284b767dfcb2a0197904287.jpg
-	        echo $info->getFilename(); 
-	    }else{
-	        // 上传失败获取错误信息
-	        echo $file->getError();
-	    }
+	/**
+	 * [addGift 添加礼物]
+	 */
+	public function addGift(){
+		$param = Request::instance()->param();
+		if(empty($param)){
+			$data['code'] = -1;
+			$data['msg']  = '参数不能为空';
+			return json($data);
+		}
+		$param['g_time'] = date("Y-m-d H:i:s",time());
+		$is = \app\index\model\Gift::addGift($param);
+		if($is){
+			$data['code'] = 1;
+			$data['msg']  = '添加成功';
+		}else{
+			$data['code'] = 0;
+			$data['msg']  = '添加成功';
+		}
+		return json($data);
+	}
+	/**
+	 * [delGift 管理员删除礼品]
+	 * @return [type] [description]
+	 */
+	public function delGift(){
+		$gid = input('request.g_id');
+		if($gid){
+			$data['code'] = -1;
+			$data['msg']  = '参数不能为空';
+			return json($data);
+		}
+		$where['g_id'] = $gid;
+		$is = \app\index\model\Gift::delGift($where);
+		if($is){
+			$data['code'] = 1;
+			$data['msg']  = '删除成功';
+		}else{
+			$data['code'] = 0;
+			$data['msg']  = '删除失败';
+		}
+		return json($data);
+	}
+	/**
+	 * [updateGift 修改礼物]
+	 * @return [type] [description]
+	 */
+	public function updateGift(){
+		$param = Request::instance()->param();
+		
+		if(!isset($param['g_id']) || empty($param)){
+	
+			$data['code'] = -1;
+			$data['msg']  = '参数不能为空';
+			return json($data);
+		}
+		$is = \app\index\model\Gift::updateGift($param);
+
+		if($is){
+			$data['code'] = 1;
+			$data['msg']  = '修改成功';
+		}else{
+			$data['code'] = 0;
+			$data['msg']  = '修改失败';
+		}
+		return json($data);
+
 	}
 
 }
+
+
+
+
+
+ ?>
