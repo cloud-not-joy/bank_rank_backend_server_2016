@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<title>新码萌学登录</title>
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="{$Think.config.web_root}css/main.css"> -->
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+</head>
+<body>
+	<div class="container">
+		<div class="title"><span class="login">登 录</span></div>
+		<div class="form">
+			<form action="logining" method="post">
+		        <input type="text" name="name" class="username form-control" placeholder="用户名">
+		        <input type="password" name="password" class="password form-control" placeholder="密码">
+		        <div class="captchas">
+		     <!--    	<input placeholder="请输入验证码" name="captcha" class="captcha form-control"></input>
+		            <img src="{:captcha_src()}" alt="captcha" onclick="this.src='{:captcha_src()}'"/>
+		        </div> -->
+		        <input type="hidden" name="check">
+		        <button type="submit" class="submit">提交</button>
+		    </form>
+	    </div>
+	    <span class="more"><a href="http://www.kancloud.cn/w113211/killall">更多后台小功能</a></span>
+    </div>
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>
