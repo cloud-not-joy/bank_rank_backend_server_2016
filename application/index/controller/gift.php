@@ -11,7 +11,13 @@ class Gift extends Controller{
 	 * @return [type] [description]
 	 */
 	public function giftList(){
-		
+		$page = empty(input('request.page')) ? 1 : input('request.page');
+    	$pageSize = input('request.page_size');
+    	$data['page_size'] = empty($pageSize) ? 10 : $pageSize;
+    	$data['page'] = ($page -1)*$data['page_size'];
+    	$field ='g_id,gift_name,integral,gift_img';
+    	$list = \app\index\model\Gift::getPageData($data,$field);
+    	return json($list);
 
 	}
 	/**

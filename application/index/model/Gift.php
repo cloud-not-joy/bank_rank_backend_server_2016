@@ -17,14 +17,49 @@ class Gift extends \think\Model{
 	public static function updateGift($param){
 		return Gift::update($param);
 	}
+	/**
+	 * [getOne description]
+	 * @param  [type] $where [description]
+	 * @return [type]        [description]
+	 */
+	public static function getOne($where , $field){
+        $gift = Gift::field($field)->where($where)->find();
+        if(!empty($gift)){
+            $gift = $gift->toArray();
+            return $gift;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * [getDatas 获取数据]
+     * @return [type] [description]
+     */
+    public static function getDatas($where=array(),$field='gift_name'){
+        $gift = new Gift();
+        $list = $gift->field($field)->where($where)->select();
+        $res = array();
+        foreach($list as $key=>$val){ 
+            $res[] = $val->toArray();
+        } 
+        return $res;
+    
+    }
 	/*礼物列表*/
-	public static function getList(){
-		$gift = new Gift();
-		// 查询数据集
-		$gift->limit(10)
-		    ->order('int', 'desc')
-		    ->select();
-	}
+	public static function getPageData($param,$field){
+        // 查询数据集
+        $list = Gift::field($field)->limit($param['page'],$param['page_size'])->order('integral', 'desc')->select();
+       // echo Gift::getLastSql();
+
+        $count = Gift::count();
+        foreach ($list as $k => $val) {
+            $tmp = $val->toArray(); 
+            $res[] = $tmp;
+        }
+        $res['count'] = $count;
+        $res['page']  = $param['page']+1;
+        return $res;
+    }
 
 }
 

@@ -3,6 +3,25 @@ namespace app\index\model;
 use think\Input;
 
 class StaffInfo extends \think\Model{
+    /**
+     * [getPageData 得到员工列表分页数据]
+     * @return [type] [description]
+     */
+    public static function getPageData($param){
+        // 查询数据集
+        $list = StaffInfo::limit($param['page'],$param['page_size'])->order('current_integral', 'desc')->select();
+       // echo StaffInfo::getLastSql();
+
+        $count = StaffInfo::count();
+        foreach ($list as $k => $val) {
+            $tmp = $val->toArray();
+            unset($tmp['password']);
+            $res[] = $tmp;
+        }
+        $res['count'] = $count;
+        $res['page']  = $param['page']+1;
+        return $res;
+    }
 
 	/*管理员录入员工信息*/
 	public static function addStaff($param){

@@ -9,39 +9,118 @@ use PHPExcel_IOFactory;
 use PHPExcel;
 
 class Staff extends Controller{
+
+	public function search(){
+		$key = input('request.key');
+		if(empty($key)){
+			$err['code'] =-1;
+			$err['msg']  ='参数不能为空';
+			return json($err);
+		}
+		$map['ver_code'] = $key;
+		$res = \app\index\model\Trade::getOne($map,'staff_number');
+		// print_r($res);
+		if(empty($res)){
+			$where['staff_number|staff_name'] = $key;
+		}else{
+			$where['staff_number'] = $res['staff_number'];
+		}
+		$list = \app\index\model\StaffInfo::getOne($where);
+
+		$wheres['staff_id'] = $list['staff_id'];
+		$wheres['is_right'] = 1;
+		//查询可以兑换的礼品
+		//
+		$level = \app\index\model\Level::getDatas($wheres);
+
+		if(!empty($level)){
+			foreach ($level as $ke => $val) {
+				$is_level[] = $val['level_id'];
+			}
+			$maps['level_id'] = array('in', $is_level);
+			$maps['integral'] = array('elt',$list['current_integral']);
+			$gift = \app\index\model\Gift::getDatas($maps , 'gift_name');
+			$can = '';
+			for($i = 0; $i< count($gift) ; $i++){
+				$can .= $gift[$i]['gift_name'].',';
+			}
+			$list['can'] = trim($can,',');
+
+		}
+    	
+    	return json($list);
+		
+
+	}
+	/**
+	 * [getRecord 得到记录]
+	 * @return [type] [description]
+	 */
+	public function getRecord(){
+		$data['staff_number'] = input('request.number');
+		if(empty($data['staff_number'])){
+			$err['code'] =-1;
+			$err['msg']  ='参数不能为空';
+			return json($err);
+		}
+		$field = 'traff_id,gift_name,use_integral,ver_code,is_confirm';
+		$list = \app\index\model\Trade::getDatas($data , $field);
+		return json($list);
+
+	}
+	/**
+     * [getStaffList 获取管理登录 员工数据列表]
+     * @return [type] [description]
+     */
+    public function getStaffList(){
+    	$page = empty(input('request.page')) ? 1 : input('request.page');
+    	$pageSize = input('request.page_size');
+    	$data['page_size'] = empty($pageSize) ? 10 : $pageSize;
+    	$data['page'] = ($page -1)*$data['page_size'];
+    	$list = \app\index\model\StaffInfo::getPageData($data);
+    	$staff_number = array();
+    	foreach ($list as $k => $v) {
+    		if(is_array($v)){
+    			$list[$k]['can'] = '';
+    		}
+    		if($v['current_integral']<10 ){
+
+    			continue;
+    		}
+    		$where['staff_id'] = $v['staff_id'];
+    		$where['is_right'] = 1;
+    		//查询可以兑换的礼品
+    		$level = \app\index\model\Level::getDatas($where);
+    		
+    		if(!empty($level)){
+    			foreach ($level as $ke => $val) {
+    				$is_level[] = $val['level_id'];
+    			}
+    			$map['level_id'] = array('in', $is_level);
+    			$map['integral'] = array('elt',$v['current_integral']);
+    			$gift = \app\index\model\Gift::getDatas($map , 'gift_name');
+    			$can = '';
+    			for($i = 0; $i< count($gift) ; $i++){
+    				$can .= $gift[$i]['gift_name'].',';
+    			}
+    			$list[$k]['can'] = trim($can,',');
+
+    		}
+    	}
+    	
+    	return json($list);
+    }
 	/**
 	 * [addStaff 管理员手动录入用户信息]
 	 */
 	public function addStaff(){
-
-		//基本信息需要录入到User表
-		$userData['username'] = input('request.staff_number');
-		$userData['password'] = md5(input('request.password'));
-		$userData['role']	  = input('request.staff_role');
-		$accumulate = input('request.accumulate');
-		$consume    = input('require.consume');
-		if(!empty($accumulate)){
-			$userData['accumulate'] = $accumulate;
-		}
-		if(!empty($consume)){
-			$userData['consume']  = $consume;
-		}
-		$is_null = \app\index\model\User::searchOne($userData['username']);
-
-		if(empty($is_null)){
-	
-			$is = \app\index\model\User::addStaffInfo($userData);
-		}
     	//添加到数据源的信息表
     	$param = Request::instance()->param();
     	$param['add_time'] = date("Y-m-d H:i:s",time());
     	//查找本月数据是否存在条件
     	$where['staff_number'] = $param['staff_number'];
-    	$cru_time = date("Y-m",time());
-    	$where['add_time']     = array("like","$cru_time%");
     	$current = \app\index\model\StaffInfo::getOne($where);
     	if(!$current){
-
 	    	$_is = \app\index\model\StaffInfo::addStaff($param);
 	    	if($_is){
 	    		$data['code'] = 1;
@@ -151,6 +230,7 @@ class Staff extends Controller{
        	//3、跟新员工累计积分等信息
        	//4、通过累计积分更新能兑换礼品等级表信息
        	$_is = true;
+       	$i = 0;
        	foreach ($arr as $k => $v) {
        		if(!$flag){
        			$standard[$v[1]]['current'] = $v[5];
@@ -168,6 +248,7 @@ class Staff extends Controller{
 			       		$arrData[$i]['standard']  = $v[4];
 			       		$arrData[$i]['current_deposit'] = $v[5];
 			       		$arrData[$i]['add_time'] = date("Y-m H:i:s",time());
+			       		$i++;
 	       			}else{
 	       				$standard[$v[1]]['current'] = $v[5];
 	       				$standard[$v[1]]['standard']   = $v[4];
@@ -367,6 +448,7 @@ class Staff extends Controller{
 		fclose($fp); 
 
     }
+
 
 }
 
