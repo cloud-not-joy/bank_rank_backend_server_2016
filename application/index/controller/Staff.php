@@ -9,7 +9,10 @@ use PHPExcel_IOFactory;
 use PHPExcel;
 
 class Staff extends Controller{
-
+	/**
+	 * [search 操作管理员对员工管理界面的快速搜索]
+	 * @return [type] [description]
+	 */
 	public function search(){
 		$key = input('request.key');
 		if(empty($key)){
@@ -44,7 +47,12 @@ class Staff extends Controller{
 			for($i = 0; $i< count($gift) ; $i++){
 				$can .= $gift[$i]['gift_name'].',';
 			}
-			$list['can'] = trim($can,',');
+			if(empty($can)){
+				$list['can'] = '-';
+			}else{
+				$list['can'] = trim($can,',');
+			}
+			
 
 		}
     	
@@ -78,13 +86,12 @@ class Staff extends Controller{
     	$data['page_size'] = empty($pageSize) ? 10 : $pageSize;
     	$data['page'] = ($page -1)*$data['page_size'];
     	$list = \app\index\model\StaffInfo::getPageData($data);
-    	$staff_number = array();
+    	// $staff_number = array();
     	foreach ($list as $k => $v) {
     		if(is_array($v)){
-    			$list[$k]['can'] = '';
+    			$list[$k]['can'] = '-';
     		}
     		if($v['current_integral']<10 ){
-
     			continue;
     		}
     		$where['staff_id'] = $v['staff_id'];
@@ -104,7 +111,8 @@ class Staff extends Controller{
     				$can .= $gift[$i]['gift_name'].',';
     			}
     			$list[$k]['can'] = trim($can,',');
-
+    		}else{
+    			$list[$k]['can'] = "-";
     		}
     	}
     	
@@ -357,10 +365,14 @@ class Staff extends Controller{
 			$data = \app\index\model\Level::getOne($tmp);
 			//如果满足条件 无记录则添加记录 添加时间
 			if(empty($data)){
-				$tmp['evet_time'] = time();
-				$tmp['is_right'] = 0;
-				$tmp['min_integral'] = $integer;
-				$isAdd = \app\index\model\Level::addOne($tmp);
+				$level = $tmp['level_id'];
+				for ($i= 1 ; $i <= $level; $i++) {
+					$tmp['level_id'] = $level[$i];
+					$tmp['evet_time'] = time();
+					$tmp['is_right'] = 0;
+					$tmp['min_integral'] = $integer;
+					$isAdd = \app\index\model\Level::addOne($tmp);
+				}
 				return $isAdd;
 			}else{
 				$num = $tmp['level_id'];
@@ -386,24 +398,71 @@ class Staff extends Controller{
 	 * @return [type] [description]
 	 */
 	public function export(){
+
 		$where = array();
 		$list = \app\index\model\StaffInfo::getDatas($where);
-		$data = $this->doexport($list);
-		return json($data);
+		//print_r($list);
+		$arr = array(array('员工号','姓名','部门名称','角色','十月末任务定额','上期存款','本期存款','累计积分','已兑换积分','剩余积分','可兑换商品'));
+		foreach ($list as $k => $v) {
+			$tmp = array();
+			$tmp[] = $v['staff_number'];
+			$tmp[] = $v['staff_name'];
+			$tmp[] = $v['department'];
+			$tmp[] = $v['staff_role'];
+			$tmp[] = $v['standard'] ;
+			$tmp[] = $v['previous_deposit'];
+			$tmp[] = $v['current_deposit'];
+			$tmp[] = $v['accumulate'];
+			$tmp[] = $v['consume'] ;
+			$tmp[] = $v['current_integral'];
+			//组合可兑换商品	
+    		$can = '-'; 
+    		if($v['current_integral']<10 ){
+    			$tmp[] = $can;
+    			$arr[$k+1] = $tmp;
+    			continue;
+    		}
+    		$where['staff_id'] = $v['staff_id'];
+    		$where['is_right'] = 1;
+    		//查询可以兑换的礼品
+    		$level = \app\index\model\Level::getDatas($where);
+    		
+    		if(!empty($level)){
+    			$is_level = array();
+    			foreach ($level as $ke => $val) {
+    				$is_level[] = $val['level_id'];
+    			}
+    			$map['level_id'] = array('in', $is_level);
+    			$map['integral'] = array('elt',$v['current_integral']);
+    			$gift = \app\index\model\Gift::getDatas($map , 'gift_name');
+    			$can = '';
+    			for($i = 0; $i< count($gift) ; $i++){
+    				$can .= $gift[$i]['gift_name'].',';
+    			}
+    			$can = trim($can,',');
+    		}
+    		$tmp[] = $can; 
+    		$arr[$k+1] = $tmp;
+    	
+		}
+		// print_r($arr1);
+		// print_r($arr);
+		$this->doexport($arr , $path = './member.xlsx');
 
 	}
-	public function doexport($arr,$path='./test.xlsx'){
+
+	public function doexport($arr=array(),$path='./test.xlsx'){
 
 		$res=Loader::import('PHPExcel.PHPExcel',EXTEND_PATH);
 
         $PHPExcel = new PHPExcel();
         $sheet_index = 0;
         $PHPExcel->removeSheetByIndex();
-        $arr=array(
-        	array(1,2,3),
-        	array(4,5,6)
+        // $arr=array(
+        // 	array(1,2,3),
+        // 	array(4,5,6)
 
-        	);
+        // 	);
 
         foreach ($arr as $key => $values) {
         	$i = $key+1;
@@ -415,6 +474,9 @@ class Staff extends Controller{
         $PHPExcelWriter = PHPExcel_IOFactory::createWriter($PHPExcel, 'Excel2007');
      	// $PHPExcelWriter->save('php://output');
     	// exit;
+    	if(file_exists($path)){
+    		unlink($path);
+    	}
         $PHPExcelWriter->save($path);
         $this->downFile($path);
     }
@@ -448,6 +510,35 @@ class Staff extends Controller{
 		fclose($fp); 
 
     }
+
+    /**
+	 * [getTradeByTime 通过时间获取某个时间的员的交易记录]
+	 * @return [type] [description]
+	 */
+	public function getTradeByTime(){
+		$startTime = input('request.startTime');
+		$endTime = input('request.endTime');
+		if(empty($startTime) || empty($endTime)){
+			$err['code'] = -1;
+			$err['msg']  = '时间段不该为空！';
+			return json($err);
+		}
+		$map['traff_time'] = array(array('egt',$startTime),array('elt',$endTime));
+		$field = 'staff_number,staff_name,gift_name,use_integral';
+		$res = \app\index\model\Trade::getDatas($map,$field);
+		
+		$arr = array(array('员工号','姓名','礼物名','所用积分'));
+		foreach ($res as $k => $v) {
+			$tmp = array();
+			$tmp[] = $v['staff_number'];
+			$tmp[] = $v['staff_name'];
+			$tmp[] = $v['gift_name'];
+			$tmp[] = $v['use_integral'];
+			$arr[$k+1] = $tmp;
+		}
+		$this->doexport($arr , $path = './exchange.xlsx');
+	}
+
 
 
 }

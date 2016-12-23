@@ -7,7 +7,7 @@ class Trade extends \think\Model{
 
     public static function getDatas($where=array(),$field=''){
         $trade = new Trade();
-        $list = $trade->field($field)->where($where)->select();
+        $list = $trade->field($field)->where($where)->order('staff_number', 'asc')->select();
         //echo $trade->getLastSql();
 
         $res = array();

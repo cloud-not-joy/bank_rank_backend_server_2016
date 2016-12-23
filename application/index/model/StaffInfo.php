@@ -38,6 +38,7 @@ class StaffInfo extends \think\Model{
         $staffInfo = staffInfo::where($where)->find();
         if(!empty($staffInfo)){
             $staffInfo = $staffInfo->toArray();
+            unset($staffInfo['password']);
             return $staffInfo;
         }else{
             return false;
@@ -134,7 +135,27 @@ class StaffInfo extends \think\Model{
         // var_dump($list);
 
     }
+    /**
+     * [login 员工登录]
+     * @param  [type] $name     [description]
+     * @param  [type] $password [description]
+     * @return [type]           [description]
+     */
+    public static function login($name, $password){
 
+        $where['staff_number'] = $name;
+        $where['password'] = md5($password);
+        $user = StaffInfo::where($where)->find();
+        if(empty($user)){
+           return false;
+        }
+        $user = $user->toArray();
+        //echo StaffInfo::getLastSql();
+        unset($user["password"]);
+        $user['username'] = $user['staff_number'];
+        session("ext_user", $user);
+        return $user;
+    }
 
 
 }

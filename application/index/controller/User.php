@@ -26,10 +26,9 @@ class User extends Controller{
         $data['code'] = -1;
         $data['msg']  = '请传正确的员工标识';
       }
-      $integral = \app\index\model\User::searchOne($username);
-      $info = \app\index\model\StaffInfo::searchOne($username);
-      $res = array_merge($info,$integral);
-      return json($res);
+      $where['staff_number'] = $username;
+      $info = \app\index\model\StaffInfo::getOne($where);
+      return json($info);
     }
     /**
      * [addUser 超级管理员添加管理员]

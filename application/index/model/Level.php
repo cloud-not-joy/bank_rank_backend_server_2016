@@ -30,7 +30,7 @@ class Level extends \think\Model{
     public static function getDatas($where=array(),$field='level_id'){
         $level = new Level();
         $list = $level->field($field)->where($where)->select();
-        echo $level->getLastSql();
+        //echo $level->getLastSql();
         $res = array();
         foreach($list as $key=>$val){ 
             $res[] = $val->toArray();

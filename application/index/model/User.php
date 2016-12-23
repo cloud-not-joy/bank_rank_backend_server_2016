@@ -10,7 +10,11 @@ class User extends \think\Model{
         $where['username'] = $name;
         $where['password'] = md5($password);
 
-        $user=User::where($where)->find()->toArray();
+        $user=User::where($where)->find();
+        if(empty($user)){
+           return false;
+        }
+        $user = $user->toArray();
         $role = $user['role'] ;
         if($role == 1){
             $user['role'] = '超级管理员';
@@ -57,9 +61,8 @@ class User extends \think\Model{
     }
 
     /*查询一条数据*/
-    public static function searchOne($name){
-        $where['username'] = $name;
-        $user=User::field('accumulate,consume')->where($where)->find();
+    public static function searchOne($where){
+        $user=User::where($where)->find();
         if(!empty($user)){
             $user = $user->toArray();
         }
