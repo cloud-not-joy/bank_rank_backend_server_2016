@@ -22,7 +22,7 @@ class Trade extends \think\Model{
 	 * @param  [type] $where [description]
 	 * @return [type]        [description]
 	 */
-	public static function getOne($where , $field){
+	public static function getOne($where, $field){
         $gift = Trade::field($field)->where($where)->find();
         if(!empty($gift)){
             $gift = $gift->toArray();

@@ -6,8 +6,7 @@ use think\Request;
 use Captcha;
 class Login extends Controller{
 
-	public function login(){
-
+  public function login(){
       //return $this->fetch('login');
   }
 
@@ -20,11 +19,7 @@ class Login extends Controller{
       $data['msg']  = '用户名或者密码不能为空';
       return json($data);
     }
-    //$name = Request::instance()->get('name');
-    // $data = input('request.captcha');
-    // if(!captcha_check($data)){
-    //     return $this->error("验证码错误","location:/login");
-    // };
+    
     $where['username'] = $name;
     $user =  \app\index\model\User::searchOne($where);
     if(!empty($user)){
@@ -32,7 +27,7 @@ class Login extends Controller{
     }else{
       $info=\app\index\model\StaffInfo::login($name, $password);
     }
-  
+    
     if ($info) {
       $data['code'] = 1;
       $data['msg']  = '登录成功';
