@@ -443,10 +443,27 @@
 
 
 
-    <script src="scripts/vendor.js"></script>
+    <!-- build:js scripts/vendor.js -->
+    <script src="scripts/v/jquery.min.js"></script>
+    <script src="scripts/v/vue.min.js"></script>
+    <script src="scripts/v/vue.router.js"></script>
+    <script src="scripts/v/vue.pagination.js"></script>
+    <!-- bower:js -->
+    <!-- endbower -->
+    <!-- endbuild -->
 
-    <script src="scripts/plugins.js"></script>
+    <!-- build:js scripts/plugins.js -->
+    <script src="scripts/v/bootstrap.min.js"></script>
+    <!-- endbuild -->
 
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/store/default.js"></script>
+    <script src="scripts/store/state.js"></script>
+    <script src="scripts/data.js"></script>
+    <script src="scripts/login.js"></script>
+    <script src="scripts/staff.js"></script>
+    <script src="scripts/admin.js"></script>
     <script src="scripts/main.js"></script>
+    <!-- endbuild -->
   </body>
 </html>
