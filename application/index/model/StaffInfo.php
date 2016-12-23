@@ -55,6 +55,66 @@ class StaffInfo extends \think\Model{
         //var_dump($res);
         return $res;
     }
+    /**
+     * [addAll 批量新增数据]
+     * @param [type] $list [description]
+     */
+    public static function addAll($list){
+        $staff = new StaffInfo;
+        $list = $staff->saveAll($list);
+        $res = array();
+        foreach($list as $key=>$val){ 
+            $tmp = $val->toArray();
+            unset($tmp['password']);
+            $res[] = $tmp;
+        } 
+
+        return $res;
+    }
+    /**
+     * [getDatas 获取数据]
+     * @return [type] [description]
+     */
+    public static function getDatas($where=array()){
+
+        $list = array();
+        $staff = new StaffInfo();
+        $list = $staff->where($where)->select();
+        $res = array();
+        foreach($list as $key=>$val){ 
+            $res[] = $val->toArray();
+        } 
+        return $res;
+    
+    }
+    /**
+     * [getByNumber 通过条件查找]
+     * @param  [type] $where [description]
+     * @return [type]        [description]
+     */
+    public static function getByNumber($where=array(),$field=''){
+        $list = array();
+        $user = new StaffInfo();
+        $list = $user->field($field)->where($where)->select();
+        // echo $user->getLastSql();
+        // die;
+        $res = array();
+        foreach($list as $key=>$val){ 
+            $res[] = $val->toArray();
+        } 
+        return $res;
+    }
+    /**
+     * [updateAll 批量更新操作用户积分、存款数据]
+     * @return [type] [description]
+     */
+    public static function updateAll($list){
+        $user = new StaffInfo();
+        $list = $user->saveAll($list);
+        return $list;
+        // var_dump($list);
+
+    }
 
 
 

@@ -77,4 +77,23 @@ class User extends \think\Model{
             return false;
         }
     }
+
+    /**
+     * [getByNumber 通过条件查找]
+     * @param  [type] $where [description]
+     * @return [type]        [description]
+     */
+    public static function getByNumber($where=array(),$field=''){
+        $list = array();
+        $user = new User();
+        $list = $user->field($field)->where($where)->select();
+        // echo $user->getLastSql();
+        // die;
+        $res = array();
+        foreach($list as $key=>$val){ 
+            $res[] = $val->toArray();
+        } 
+        return $res;
+    }
+
 } 
