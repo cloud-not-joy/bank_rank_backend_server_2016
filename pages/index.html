@@ -1,0 +1,452 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>积分兑换系统</title>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <link rel="stylesheet" href="styles/vendor.css">
+
+    <link rel="stylesheet" href="styles/main.css">
+
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browserupgrade">您正在使用 <strong>过时，且危险的</strong> 浏览器。为了保障您的信息安全，请下载使用最新浏览器。下载地址<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">http://rj.baidu.com/soft/detail/14744.html</a></p>
+    <![endif]-->
+    
+    <div id="app-start" class="container-fluid">
+      <router-view></router-view>
+    </div>
+
+    <div class="loading-div hide">
+      <p>加载中...</p>
+    </div>
+
+    <script id="admin-system-template" type="template">
+      <div class="admin-system-view">
+        <div class="button-div" v-show="isShowSystem">
+          <button class="btn btn-default" v-on:click="showEditPassword()">修改密码</button>
+          <button class="btn btn-default" v-on:click="showAddAdmin()">设置管理员</button>
+        </div>
+
+        <div class="edit-view edit-password-view" v-show="isShowEditPassword">
+          <h4 class="title">修改密码</h4>
+          <div class="form-group">
+            <label>旧密码：</label>
+            <input type="password">
+          </div>
+          <div class="form-group">
+            <label>新密码：</label>
+            <input type="password">
+          </div>
+          <button class="btn btn-success" v-on:click="showSystem()">确认修改</button>
+        </div>
+
+        <div class="edit-view add-admin-view" v-show="isShowAddAdmin">
+          <h4 class="title">添加管理员</h4>
+          <div class="form-group">
+            <label>设置管理员账号：</label>
+            <input type="password">
+          </div>
+          <div class="form-group">
+            <label>设置管理员密码：</label>
+            <input type="password">
+          </div>
+          <button class="btn btn-success" v-on:click="showSystem()">确认修改</button>
+        </div>
+      </div>
+    </script>
+
+    <script id="admin-goods-template" type="template">
+      <div class="admin-goods-view">
+        <div class="admin-staff-view">
+          <div class="admin-stall-list" v-show="!isShowAddGoods">
+            <p class="add-staff-p btn btn-primary btn-sm" v-on:click="showAddGoods()"><span class="glyphicon glyphicon-plus"></span><span class="add-staff">添加礼品</span></p>
+            <div class="staff-table">
+              <table class="table-bordered">
+                <thead>
+                <tr>
+                  <th>礼品名称</th>
+                  <th>礼品图片</th>
+                  <th>兑换积分</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="itemGoods of goodsArray">
+                  <td>{{ itemGoods.name }}</td>
+                  <td class="image"><img :src="itemGoods.image" /></td>
+                  <td>{{ itemGoods.rank }}</td>
+                  <td>
+                    <span class="operation-font edit" v-on:click="showEditGoods(itemGoods)">修改</span>
+                    <span class="operation-font del" v-on:click="delGoods(itemGoods)">删除</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="clearfix staff-pagination">
+              <!--<vue-nav :cur.sync="pageDatas.cur" :all.sync="pageDatas.all" v-on:btn-click="listenPage"></vue-nav>-->
+            </div>
+          </div>
+
+          <div class="staff-add-view" v-show="isShowAddGoods">
+            <h4 class="title" v-show="isAddGoods">添加礼品</h4>
+            <h4 class="title" v-show="isEditGoods">修改礼品</h4>
+            <div class="staff-add-from">
+              <div class="form-group">
+                <label>礼品名称：</label>
+                <input type="text" v-model="newGoods.name">
+              </div>
+              <div class="form-group">
+                <label>兑换积分：</label>
+                <input type="text" v-model="newGoods.rank">
+              </div>
+              <br>
+              <div class="form-group">
+                <label>添加图片：</label>
+                <input type="file">
+              </div>
+              <div class="form-group">
+                <img class="edit-goods-img" :src="newGoods.image" />
+              </div>
+
+              <button class="btn btn-success" v-on:click="addGoods()" v-show="isAddGoods">添加礼品</button>
+              <button class="btn btn-success" v-on:click="editGoods()" v-show="isEditGoods">提交修改</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="admin-staff-template" type="template">
+      <div class="admin-staff-view">
+        <div class="admin-stall-list" v-show="!isShowAddStaff">
+          <p class="add-staff-p btn btn-primary btn-sm" v-on:click="showAddStaff()"><span class="glyphicon glyphicon-plus"></span><span class="add-staff">添加员工</span></p>
+          <p style="float: right;margin: 15px;">
+            <button type="button" class="btn btn-primary btn-sm">导出数据</button>
+            <button type="button" class="btn btn-primary btn-sm">导入数据</button>
+          </p>
+          <div class="form-group" style="margin: 15px;">
+            <input type="text" class="form-control" placeholder="请输入关键字"style="height: 33px;display: inline-block;">
+            <button class="btn btn-primary btn-sm" type="button">search</button>
+          </div>
+          <div class="staff-table">
+            <table class="table-bordered">
+              <thead>
+                <tr>
+                  <th>员工名称</th>
+                  <th>员工号</th>
+                  <th>部门名称</th>
+                  <th>角色</th>
+                  <th>月末任务定额</th>
+                  <th>上期存款</th>
+                  <th>本期存款</th>
+                  <th>累计积分</th>
+                  <th>已兑换积分</th>
+                  <th>剩余积分</th>
+                  <th>可兑换商品</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="itemStaff of staffs">
+                  <td>{{ itemStaff.name }}</td>
+                  <td>{{ itemStaff.id }}</td>
+                  <td>{{ itemStaff.department }}</td>
+                  <td>{{ itemStaff.role }}</td>
+                  <td>{{ itemStaff.quota }}</td>
+                  <td>{{ itemStaff.previousDeposit }}</td>
+                  <td>{{ itemStaff.currentDeposit }}</td>
+                  <td>{{ itemStaff.cumulativeRank }}</td>
+                  <td class="exchange-rank" v-on:click="showOneStaffExchange(itemStaff)">{{ itemStaff.exchangedRank }}</td>
+                  <td>{{ itemStaff.remainRank }}</td>
+                  <td>{{ itemStaff.convertibleGoods }}</td>
+                  <td>
+                    <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)">修改</span>
+                    <span class="operation-font del" v-on:click="delStaff(itemStaff)">删除</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="clearfix staff-pagination">
+            <vue-nav :cur.sync="pageData.cur" :all.sync="pageData.all" v-on:btn-click="listenPage"></vue-nav>
+          </div>
+        </div>
+
+        <div class="staff-add-view" v-show="isShowAddStaff">
+          <h4 class="title" v-show="isAddStaff">添加员工</h4>
+          <h4 class="title" v-show="isEditStaff">修改员工</h4>
+          <div class="staff-add-from">
+            <div class="form-group">
+              <label>员工名称：</label>
+              <input type="text" v-model="newStaff.name">
+            </div>
+            <div class="form-group">
+              <label>员工号：</label>
+              <input type="text" v-model="newStaff.id">
+            </div>
+            <div class="form-group">
+              <label>部门名称：</label>
+              <input type="text" v-model="newStaff.department">
+            </div>
+            <div class="form-group">
+              <label>角色：</label>
+              <input type="text" v-model="newStaff.role">
+            </div>
+            <div class="form-group">
+              <label>月末任务定额：</label>
+              <input type="text" v-model="newStaff.quota">
+            </div>
+            <div class="form-group">
+              <label>上期存款：</label>
+              <input type="text" v-model="newStaff.previousDeposit">
+            </div>
+            <div class="form-group">
+              <label>本期存款：</label>
+              <input type="text" v-model="newStaff.currentDeposit">
+            </div>
+            <!--<div class="form-group">-->
+              <!--<label>累计积分：</label>-->
+              <!--<input type="text" v-model="newStaff.cumulativeRank">-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--<label>已兑换积分：</label>-->
+              <!--<input type="text" v-model="newStaff.exchangedRank">-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--<label>剩余积分：</label>-->
+              <!--<input type="text" v-model="newStaff.remainRank">-->
+            <!--</div>-->
+            <div class="form-group">
+              <label>初始密码：</label>
+              <input type="text" v-model="newStaff.password">
+            </div>
+
+            <button class="btn btn-success" v-on:click="addStaff()" v-show="isAddStaff">添加员工</button>
+            <button class="btn btn-success" v-on:click="editStaff()" v-show="isEditStaff">提交修改</button>
+          </div>
+        </div>
+
+        <div class="modal fade exchange-modal staff-exchange-history" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="exchang-content">
+                <p class="title">
+                  兑换记录
+                </p>
+                <div class="alert-content staff-exchange-list-div">
+                  <ul class="exchange-history-list">
+                    <li>
+                      <span class="title-name">商品名称</span>
+                      <span class="title-name">消耗积分</span>
+                    </li>
+                    <li class="history-li" v-for="item of currentStaffExchangeRecard">
+                      <span class="name">{{ item.name }}</span>
+                      <span class="name">{{ item.rank }}</span>
+                      <span class="name">
+                        <button class="btn btn-success" v-show="!item.isConfirm" v-on:click="confirmExchange(item)">确认</button>
+                        <button class="btn disabled btn-default" v-show="item.isConfirm">已兑换</button>
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="confirm-button clearfix">
+                <button class="sure" v-on:click="closeConfirm()">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </script>
+
+    <script id="admin-template" type="template">
+      <div class="admin-view staff-view">
+        <div class="staff-header">
+          <div class="header-content">
+            <h3 class="title">积分兑换系统</h3>
+            <div class="admin-info-div">
+              <p>欢迎你管理员 <span>美国队长</span></p>
+            </div>
+            <h4 class="login-off" v-on:click="logoff()">退出登陆</h4>
+          </div>
+        </div>
+
+        <div class="admin-container clearfix">
+          <div class="admin-left-menu">
+            <ul>
+              <router-link to="/admin/staff"><li class="active">人员管理</li></router-link>
+
+              <router-link to="/admin/goods"><li>礼品管理</li></router-link>
+              <router-link to="/admin/system"><li>系统设置</li></router-link>
+            </ul>
+          </div>
+
+          <div class="admin-content-view">
+            <router-view></router-view>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="staff-template" type="template">
+      <div class="staff-view">
+        <div class="staff-header">
+          <div class="header-content">
+            <h3 class="title">积分兑换系统</h3>
+            <div class="staff-info-div">
+              <table>
+                <tr>
+                  <td>{{ staffInfo.name }}</td>
+                  <td>{{ staffInfo.department }}</td>
+                  <td rowspan="2">{{ currentMonth }}月末任务额定:{{ staffInfo.quota }}</td>
+                  <td class="red-font">上期存款:{{ staffInfo.previousDeposit }}</td>
+                  <td class="red-font" rowspan="2">累计积分:{{ staffInfo.cumulativeRank }}</td>
+                  <td class="red-font" rowspan="2">已兑换积分:{{ staffInfo.exchangedRank }}</td>
+                  <td class="red-font" rowspan="2">剩余积分:{{ staffInfo.remainRank }}</td>
+                </tr>
+                <tr>
+                  <td>ID:{{ staffInfo.id }}</td>
+                  <td></td>
+                  <td class="red-font">本期存款:{{ staffInfo.currentDeposit }}</td>
+                </tr>
+                <tr>
+                </tr>
+              </table>
+            </div>
+
+            <h4 class="login-off" v-on:click="logoff()">退出登陆</h4>
+          </div>
+        </div>
+
+        <div class="exchange-goods">
+          <div class="exchange-title">
+            <p><span class="glyphicon glyphicon-gift"></span><span class="font">兑换商品</span></p>
+            <p v-on:click="showExchangeHistory()"><span class="glyphicon glyphicon-time"></span><span class="font">兑换记录</span></p>
+          </div>
+          <div class="exchange-list">
+            <div class="goods-list">
+              <ul>
+                <li class="goods-item" v-for="itemGoods of goodsArray">
+                  <img :src="itemGoods.imgUrl" />
+                  <p class="title">{{itemGoods.name}}</p>
+                  <p class="clearfix">
+                    <button class="btn btn-success" v-on:click="exchange()">兑换</button>
+                    <span class="goods-rank">兑换积分：{{itemGoods.rank}}</span>
+                  </p>
+                </li>
+
+
+              </ul>
+            </div>
+            <div class="clearfix goods-pagination">
+              <vue-nav :cur.sync="pageData.cur" :all.sync="pageData.all" v-on:btn-click="listenStaffPage"></vue-nav>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade exchange-modal exchange-confirm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="exchang-content">
+                <p class="title">
+                  确定兑换
+                </p>
+                <p class="alert-content">将扣除积分400</p>
+              </div>
+              <div class="confirm-button clearfix">
+                <button class="cancel" v-on:click="closeConfirm()">取消</button>
+                <button class="sure" v-on:click="sureConfirm()">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade exchange-modal exchange-ok" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="exchang-content">
+                <p class="title">
+                  兑换成功
+                </p>
+                <p class="alert-content">
+                  <span>你已成功兑换，兑换商品洗衣机</span><br>
+                  <span>兑换码：APP132</span>
+                </p>
+              </div>
+              <div class="confirm-button clearfix">
+                <button class="sure" v-on:click="closeConfirm()">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade exchange-modal exchange-history" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="exchang-content">
+                <p class="title">
+                  兑换记录
+                </p>
+                <div class="alert-content">
+                 <ul class="exchange-history-list">
+                  <li><span class="name">商品名称</span><span class="rank">消耗积分</span></li>
+                  <li v-for="item of exchangeHistoryList">
+                    <span class="name">{{ item.name }}</span>
+                    <span class="rank">{{ item.rank }}</span>
+                  </li>
+                 </ul>
+                </div>
+              </div>
+              <div class="confirm-button clearfix">
+                <button class="sure" v-on:click="closeConfirm()">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="login-template" type="template" >
+      <div class="login-view">
+        <div class="login-form">
+          <h3 class="login-title">积分兑换系统</h3>
+          <div class="form-group">
+            <label for="inputEmail3" class="label-inline control-label">账号：</label>
+            <div class="input-inline">
+              <input type="text" v-model="username " class="form-control" id="inputEmail3" placeholder="账号">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputPassword3" class="label-inline control-label">密码：</label>
+            <div class="input-inline">
+              <input type="password" @keyup.13="login()" v-model="password" class="form-control" id="inputPassword3" placeholder="密码">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="button-bottom">
+              <button type="submit" class="btn btn-primary" v-on:click="login()">登陆</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </script>
+
+
+
+    <script src="scripts/vendor.js"></script>
+
+    <script src="scripts/plugins.js"></script>
+
+    <script src="scripts/main.js"></script>
+  </body>
+</html>

@@ -6,8 +6,7 @@ use think\Request;
 use Captcha;
 class Login extends Controller{
 
-	public function login(){
-
+  public function login(){
       //return $this->fetch('login');
   }
 
@@ -24,7 +23,7 @@ class Login extends Controller{
     // if(!captcha_check($data)){
     //     return $this->error("验证码错误","location:/login");
     // };
-    $info=\app\index\model\User::login($name, $password);
+    $info = \app\index\model\User::login($name, $password);
     if ($info) {
       $data['code'] = 1;
       $data['msg']  = '登录成功';
