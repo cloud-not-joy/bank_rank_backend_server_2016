@@ -17,10 +17,20 @@ class Trade extends Controller{
   * @return \think\response\Json
   */
  public function  getCode(){
+  //需要兑换的礼品的g_id
+  $_map['g_id'] = input('request.gid');
+  $field = 'level_id,integral,gift_name';
+  $giftInfo = \app\index\model\Gift::getOne($_map,$field);
+  if(empty($giftInfo)){
+    $err['code'] = -1;
+    $err['msg']  = '请选取有效礼品';
+    return json($err);
+  }
+  
   $where['staff_id'] = Session::get('ext_user.staff_id');
-  $where['level_id'] = input('request.level_id');
-  $integral = input('request.integral');
-  $gift_name = input('request.gift_name');
+  $where['level_id'] = $giftInfo['level_id']; 
+  $integral = $giftInfo['integral']; 
+  $gift_name =  $giftInfo['gift_name']; 
   $current_integral = Session::get('ext_user.current_integral');
   if($current_integral<$integral){
    $err['code'] = -1;
@@ -34,53 +44,31 @@ class Trade extends Controller{
    $err['msg']  = '您积累积分时间还不够！';
    return json($err);
   }
-
-
    //修改个人所得积分
-//  var_dump($current_integral);
-//  var_dump($integral);
-  //die;
    $param['current_integral'] = $current_integral - $integral;
    $param['consume']= Session::get('ext_user.consume') + $integral;
    $map['staff_id'] = Session::get('ext_user.staff_id');
 
-//  print_r($map);
    $_is = \app\index\model\StaffInfo::updateOne($param,$map);
-
-   if(true) {
+  
+   if( $_is) {
     $current_integral = $param['current_integral'];
     $temp = $this->checkLevel($current_integral);
-    print_r($temp);
-    print_r($where['level_id']);
+    // print_r($temp);
+    // print_r($where['level_id']);
     $level_where['staff_id'] = Session::get('ext_user.staff_id');
-    if($where['level_id']== 1){
-     $param['evet_time'] = 0;
-     $level_where['level_id'] = 1;
-     $iis = \app\index\model\Level::updateData($param, $level_where);
-     var_dump($iis);
-    } else if ($temp['level_id'] = $where['level_id']) {
-     //修改level表 这个员工全部时间归零
-     for ($i = 1; $i < $temp['level_id']; $i++) {
-      $param['evet_time'] = 0;
-      $level_where['level_id'] = $i;
-      $iis = \app\index\model\Level::updateData($param, $level_where);
-      print_r($iis);
-     }
+    $level_param['evet_time'] = 0;
+    $level_param['is_right'] = 0;
 
-    } else {
-     if ($temp['level_id'] == 0) {
-      $temp['level_id'] = 1;
-     }
-     for ($i = $temp['level_id']; $i < $where['level_id']; $i++) {
-      $param['evet_time'] = 0;
+    for ($i = $temp['level_id']+1; $i <= $where['level_id']; $i++) {
       $level_where['level_id'] = $i;
-      $iis = \app\index\model\Level::updateData($param, $level_where);
-     }
+      $iis = \app\index\model\Level::updateData($level_param, $level_where);
     }
+    //修改完基础数据，确认可以兑换,添加兑换信息入库
     $num = date('Y') . str_pad(mt_rand(1, 10), 5, '0', STR_PAD_LEFT);
     $data['ver_code'] = $num;
-    $data['traff_id'] = Session::get('ext_user.traff_id');
-    $data['traff_number'] = Session::get('ext_user.traff_number');
+    $data['staff_id'] = Session::get('ext_user.staff_id');
+    $data['staff_number'] = Session::get('ext_user.staff_number');
     $data['gift_name'] = $gift_name;
     $data['use_integral'] = $integral;
     $is = \app\index\model\Trade::addData($data);
@@ -93,10 +81,20 @@ class Trade extends Controller{
      $err['code'] = 0;
      $err['msg'] = '获取兑换码失败';
     }
+
+   }else{
+     $err['code'] = -1;
+     $err['msg'] = '修改个人积分失败！';
    }
+   return json($err);
 
  }
 
+/**
+ * [checkLevel 判断剩余积分的等级]
+ * @param  [type] $integer [description]
+ * @return [type]          [description]
+ */
  public function checkLevel($integer){
 
   if($integer >= 10 && $integer <= 200){
@@ -116,10 +114,12 @@ class Trade extends Controller{
   }
   return $tmp;
  }
-
+ /**
+  * [check 管理员确认领取]
+  * @return [type] [description]
+  */
  public function check(){
-  $where['traff_id'] = input('request.traff_id');
-  $where['ver_code'] = input('request.ver_code');
+  $where['trade_id'] = input('request.trade_id');
   $param['is_confirm'] = 1;
 
   $is = \app\index\model\Trade::updateOne($param,$where);
