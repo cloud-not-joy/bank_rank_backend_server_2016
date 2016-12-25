@@ -50,7 +50,7 @@ var adminStaffView = Vue.extend({
       currentStaffExchangeRecard: [],
       pageData: {
         cur: 1,
-        all: 8
+        all: 1
       }
     }
   },
@@ -59,6 +59,8 @@ var adminStaffView = Vue.extend({
   },
   methods: {
     listenPage:function(page){
+      this.pageData.cur = page;
+      this.getStaffs(page, 10);
       console.log('你点击了' + page + '页');
     },
     showAddStaff: function() {
@@ -122,14 +124,26 @@ var adminStaffView = Vue.extend({
         }
       });
       this.staffs = _array;
+    },
+    getStaffs: function(page, pageSize) {
+      var self = this;
+      apiStaffList({
+        page: page,
+        page_size: pageSize
+      }, function(response) {
+        self.staffs = response.staffs;
+        self.pageData.all = Math.floor(response.count / 10) + 1;
+      });
     }
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter: function (to, from, next) {
     // 在渲染该组件的对应路由被 confirm 前调用
     // 不！能！获取组件实例 `this`
     // 因为当钩子执行前，组件实例还没被创建
     next(function(vm) {
-      vm.staffs = defaultDatas.staffs;
+
+      //vm.staffs = defaultDatas.staffs;
+      vm.getStaffs(vm.pageData.cur, 10);
     });
   },
 });
@@ -196,7 +210,7 @@ var adminGoodsView = Vue.extend({
       this.goodsArray = newArray;
     }
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter: function (to, from, next) {
     // 在渲染该组件的对应路由被 confirm 前调用
     // 不！能！获取组件实例 `this`
     // 因为当钩子执行前，组件实例还没被创建

@@ -58,7 +58,7 @@ var paseJson = function(response, callback) {
     response = JSON.parse(response);
   }
   if (response.code != 1) {
-    return errorAlert('服务器出错' + response.msg);
+    return errorAlert(response.msg);
   }
   callback(response.data);
 }
@@ -69,6 +69,7 @@ var paseJson = function(response, callback) {
 var apiForLogin = makePost('/login/toLogin');
 var apiUserInfo = makeGet('/user/info');
 var apiGoodsList = makeGet('/goods/list');
+var apiStaffList = makeGet('/staff/getStaffList');
 var apiStaffExchangeHistory = makeGet('/exchange/history');
 var apiStaffExchange = makePost('/exchange/do');
 

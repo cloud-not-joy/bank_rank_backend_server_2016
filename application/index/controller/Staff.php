@@ -55,9 +55,9 @@ class Staff extends Controller{
 			
 
 		}
-    	
+
     	return json($list);
-		
+
 
 	}
 	/**
@@ -87,12 +87,10 @@ class Staff extends Controller{
     	$data['page'] = ($page -1)*$data['page_size'];
     	$list = \app\index\model\StaffInfo::getPageData($data);
     	// $staff_number = array();
-    	foreach ($list as $k => $v) {
-    		if(is_array($v)){
-    			$list[$k]['can'] = '-';
-    		}
+    	foreach ($list['staffs'] as $v) {
+    		$v['can'] = '-';
     		if($v['current_integral']<10 ){
-    			continue;
+				continue;
     		}
     		$where['staff_id'] = $v['staff_id'];
     		$where['is_right'] = 1;
@@ -110,13 +108,13 @@ class Staff extends Controller{
     			for($i = 0; $i< count($gift) ; $i++){
     				$can .= $gift[$i]['gift_name'].',';
     			}
-    			$list[$k]['can'] = trim($can,',');
+                $v['can'] = trim($can,',');
     		}else{
-    			$list[$k]['can'] = "-";
+                $v['can'] = "-";
     		}
     	}
-    	
-    	return json($list);
+
+        return \app\index\model\Util::json(1, '返回员工数据', $list);
     }
 	/**
 	 * [addStaff 管理员手动录入用户信息]

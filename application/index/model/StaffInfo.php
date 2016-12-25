@@ -12,12 +12,15 @@ class StaffInfo extends \think\Model{
         $list = StaffInfo::limit($param['page'],$param['page_size'])->order('current_integral', 'desc')->select();
        // echo StaffInfo::getLastSql();
 
+        $_list = [];
+
         $count = StaffInfo::count();
         foreach ($list as $k => $val) {
             $tmp = $val->toArray();
             unset($tmp['password']);
-            $res[] = $tmp;
+            array_push($_list, $tmp);
         }
+        $res['staffs'] = $_list;
         $res['count'] = $count;
         $res['page']  = $param['page']+1;
         return $res;
