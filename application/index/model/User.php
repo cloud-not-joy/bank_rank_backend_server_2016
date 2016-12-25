@@ -99,4 +99,11 @@ class User extends \think\Model{
         return $res;
     }
 
+    public static function updateOne($data , $map){
+        $user = new User();
+        $res = $user->allowField(true)->save($data,$map);
+        //echo User::getLastSql();
+        return $res;
+    }
+
 } 

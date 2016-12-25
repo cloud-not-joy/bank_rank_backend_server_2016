@@ -156,6 +156,12 @@ class StaffInfo extends \think\Model{
         session("ext_user", $user);
         return $user;
     }
+    public static function updateOne($data , $map){
+        $user = new StaffInfo();
+        $res = $user->allowField(true)->save($data,$map);
+        //echo User::getLastSql();
+        return $res;
+    }
 
 
 }

@@ -4,6 +4,12 @@ use think\Input;
 
 class Level extends \think\Model{
 
+    public static function updateData($data,$map){
+        $level = new Level();
+        $res = $level->allowField(true)->save($data,$map);
+        //echo $level->getLastSql();
+        return $res;
+    }
     /**
      * [updateOne 根据条件更新某条信息]
      * @param  [type] $map [description]

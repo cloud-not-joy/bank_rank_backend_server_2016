@@ -32,5 +32,19 @@ class Trade extends \think\Model{
         }
     }
 
+    public  static function addData($data){
+        $trade = new Trade($data);
+        $res = $trade->allowField(true)->save();
+        return $res;
+
+    }
+
+    public static function updateOne($param, $map){
+        $trade = new Trade();
+        return $trade->allowField(true)->save($param,$map);
+    }
+    
+    
+
 }
 ?>

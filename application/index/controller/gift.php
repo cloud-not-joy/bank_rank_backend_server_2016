@@ -30,6 +30,9 @@ class Gift extends Controller{
 			$data['msg']  = '参数不能为空';
 			return json($data);
 		}
+
+		$temp = $this->checkLevel($param['integral']);
+		$param['level_id'] = $temp['level_id'];
 		$param['g_time'] = date("Y-m-d H:i:s",time());
 		$is = \app\index\model\Gift::addGift($param);
 		if($is){
@@ -40,6 +43,25 @@ class Gift extends Controller{
 			$data['msg']  = '添加成功';
 		}
 		return json($data);
+	}
+	public function checkLevel($integer){
+
+		if($integer >= 10 && $integer <= 200){
+			$tmp['level_id'] = 1;
+		}else if($integer >= 201 && $integer <= 400){
+			$tmp['level_id'] = 2;
+		}else if($integer >= 401 && $integer <= 600){
+			$tmp['level_id'] = 3;
+		}else if($integer >= 601 && $integer <= 800){
+			$tmp['level_id'] = 4;
+		}else if($integer >= 801 && $integer <= 1000){
+			$tmp['level_id'] = 5;
+		}else if($integer>1001){
+			$tmp['level_id'] = 6;
+		}else{
+			$tmp['level_id'] = 0;
+		}
+		return $tmp;
 	}
 	/**
 	 * [delGift 管理员删除礼品]
