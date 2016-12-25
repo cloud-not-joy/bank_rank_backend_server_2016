@@ -86,9 +86,8 @@ class Staff extends Controller{
     	$data['page_size'] = empty($pageSize) ? 10 : $pageSize;
     	$data['page'] = ($page -1)*$data['page_size'];
     	$list = \app\index\model\StaffInfo::getPageData($data);
-    	// $staff_number = array();
-    	foreach ($list['staffs'] as $v) {
-    		$v['can'] = '-';
+    	foreach ($list['staffs'] as $key => $v) {
+            $list['staffs'][$key]['goods'] = '-';
     		if($v['current_integral']<10 ){
 				continue;
     		}
@@ -108,9 +107,9 @@ class Staff extends Controller{
     			for($i = 0; $i< count($gift) ; $i++){
     				$can .= $gift[$i]['gift_name'].',';
     			}
-                $v['can'] = trim($can,',');
+                $list['staffs'][$key]['can'] = trim($can,',');
     		}else{
-                $v['can'] = "-";
+                $list['staffs'][$key]['can'] = "-";
     		}
     	}
 

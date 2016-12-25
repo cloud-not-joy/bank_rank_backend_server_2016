@@ -156,17 +156,17 @@
               </thead>
               <tbody>
                 <tr v-for="itemStaff of staffs">
-                  <td>{{ itemStaff.name }}</td>
-                  <td>{{ itemStaff.id }}</td>
+                  <td>{{ itemStaff.staff_name }}</td>
+                  <td>{{ itemStaff.staff_number }}</td>
                   <td>{{ itemStaff.department }}</td>
-                  <td>{{ itemStaff.role }}</td>
-                  <td>{{ itemStaff.quota }}</td>
-                  <td>{{ itemStaff.previousDeposit }}</td>
-                  <td>{{ itemStaff.currentDeposit }}</td>
-                  <td>{{ itemStaff.cumulativeRank }}</td>
-                  <td class="exchange-rank" v-on:click="showOneStaffExchange(itemStaff)">{{ itemStaff.exchangedRank }}</td>
-                  <td>{{ itemStaff.remainRank }}</td>
-                  <td>{{ itemStaff.convertibleGoods }}</td>
+                  <td>{{ itemStaff.staff_role }}</td>
+                  <td>{{ itemStaff.standard }}</td>
+                  <td>{{ itemStaff.previous_deposit }}</td>
+                  <td>{{ itemStaff.current_deposit }}</td>
+                  <td>{{ itemStaff.accumulate }}</td>
+                  <td class="exchange-rank" v-on:click="showOneStaffExchange(itemStaff)">{{ itemStaff.consume }}</td>
+                  <td>{{ itemStaff.current_integral }}</td>
+                  <td>{{ itemStaff.goods }}</td>
                   <td>
                     <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)">修改</span>
                     <span class="operation-font del" v-on:click="delStaff(itemStaff)">删除</span>
@@ -464,6 +464,6 @@
     <script src="scripts/staff.js"></script>
     <script src="scripts/admin.js"></script>
     <script src="scripts/main.js"></script>
-    <!-- endbuild -->
+    <!-- endbuild -->c
   </body>
 </html>
