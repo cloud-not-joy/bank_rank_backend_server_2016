@@ -17,7 +17,9 @@ class Gift extends Controller{
     	$data['page'] = ($page -1)*$data['page_size'];
     	$field ='g_id,gift_name,integral,gift_img';
     	$list = \app\index\model\Gift::getPageData($data,$field);
-    	return json($list);
+    	if(!empty($list)){
+    		return \app\index\model\Util::json(1, '返回员工数据', $list);
+    	}
 
 	}
 	/**
