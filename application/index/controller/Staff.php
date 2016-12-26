@@ -125,6 +125,7 @@ class Staff extends Controller{
     	//查找本月数据是否存在条件
     	$where['staff_number'] = $param['staff_number'];
     	$current = \app\index\model\StaffInfo::getOne($where);
+    	$param['password'] = md5($param['password']);
     	if(!$current){
 	    	$_is = \app\index\model\StaffInfo::addStaff($param);
 	    	if($_is){
