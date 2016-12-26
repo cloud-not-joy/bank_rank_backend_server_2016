@@ -115,6 +115,63 @@ class Staff extends Controller{
 
         return \app\index\model\Util::json(1, '返回员工数据', $list);
     }
+    /**
+     * [delStaff 管理员删除员工信息]
+     * @return [type] [description]
+     */
+    public function delStaff(){
+    	$gid = input('request.staff_id');
+		if(empty($gid)){
+			$data['code'] = -1;
+			$data['msg']  = '参数不能为空';
+			return json($data);
+		}
+		$where['staff_id'] = $gid;
+		$is = \app\index\model\StaffInfo::delStaff($where);
+		if($is){
+			$data['code'] = 1;
+			$data['msg']  = '删除成功';
+		}else{
+			$data['code'] = 0;
+			$data['msg']  = '删除失败';
+		}
+		return json($data);
+
+    }
+    /**
+     * [updateStaff 超级管理员修改员工信息]
+     * @return [type] [description]
+     */
+    public function updateStaff(){
+    	$role = Session::get('ext_user.role');
+    	if($role != 1){
+    		return \app\index\model\Util::json(-2, '只有超级管理员才能修改员工数据');
+    	}
+
+    	$param = Request::instance()->param();
+    	if(is_numeric($param['password'])){
+    		$param['password'] = md5($param['password']);
+    	}
+		
+		if(empty($param['staff_id']) || empty($param)){
+	
+			$data['code'] = -1;
+			$data['msg']  = '参数不能为空';
+			return json($data);
+		}
+
+		$is = \app\index\model\StaffInfo::updateStaff($param);
+
+		if($is){
+			$data['code'] = 1;
+			$data['msg']  = '修改成功';
+		}else{
+			$data['code'] = 0;
+			$data['msg']  = '修改失败';
+		}
+		return json($data);
+
+    }
 	/**
 	 * [addStaff 管理员手动录入用户信息]
 	 */

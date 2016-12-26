@@ -71,7 +71,7 @@ class Gift extends Controller{
 	 */
 	public function delGift(){
 		$gid = input('request.g_id');
-		if($gid){
+		if(empty($gid)){
 			$data['code'] = -1;
 			$data['msg']  = '参数不能为空';
 			return json($data);
@@ -94,7 +94,7 @@ class Gift extends Controller{
 	public function updateGift(){
 		$param = Request::instance()->param();
 		
-		if(!isset($param['g_id']) || empty($param)){
+		if(empty($param['g_id']) || empty($param)){
 	
 			$data['code'] = -1;
 			$data['msg']  = '参数不能为空';
