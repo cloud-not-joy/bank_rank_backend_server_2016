@@ -153,8 +153,9 @@ class Staff extends Controller{
     	{
     		return \app\index\model\Util::json(-1, '参数不能为空');
     	}
-    	if(is_numeric($param['password'])){
-    		$param['password'] = md5($param['password']);
+    	if(is_numeric($param['password'])) {
+            $param['password'] = md5($param['password']);
+        }
 
 		$is = \app\index\model\StaffInfo::updateStaff($param);
 
