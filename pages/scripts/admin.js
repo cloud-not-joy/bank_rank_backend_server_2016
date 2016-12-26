@@ -39,9 +39,9 @@ var adminStaffView = Vue.extend({
         standard: '',
         previous_deposit: '',
         current_deposit: '',
-        accumulate: '',
-        consume: '',
-        current_integral: '',
+        accumulate: 0,
+        consume: 0,
+        current_integral: 0,
         password: ''
       },
       staffs: [],
@@ -68,9 +68,20 @@ var adminStaffView = Vue.extend({
       this.isShowAddStaff = true;
       this.isAddStaff = true;
     },
+    checkNewStaff: function() {
+      var self = this;
+      for (var item in self.newStaff) {
+        if (self.newStaff[item] === '' && item !== 'staff_id') {
+          return false;
+        }
+      }
+      return true;
+    },
     addStaff: function() {
-
-      apiStaffAdd(this.newStaff, function(reponse) {
+      if (!this.checkNewStaff()) {
+        return alert("请完整填写用户信息");
+      }
+      apiStaffAdd(this.newStaff, (function(reponse) {
         var newArray = [].concat(this.staffs);
         newArray.push($.extend({}, this.newStaff));
         this.staffs = newArray;
@@ -81,7 +92,7 @@ var adminStaffView = Vue.extend({
         for (var _key in this.newStaff) {
           this.newStaff[_key] = '';
         }
-      });
+      }).bind(this));
     },
     // 显示员工兑换记录
     showOneStaffExchange: function(itemStaff) {

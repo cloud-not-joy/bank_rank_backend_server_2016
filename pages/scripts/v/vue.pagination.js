@@ -1,11 +1,11 @@
 (function(){
   var tm = '<div class="page-bar">'+
     '<ul>'+
-    '<li v-if="cur!=1"><a v-on:click="cur--">上一页</a></li>'+
+    '<li v-if="cur!=1"><a v-on:click="btnClick(cur--);cur--">上一页</a></li>'+
     '<li v-for="index in indexs"  v-bind:class="{ active: cur == index}">'+
     '<a v-on:click="btnClick(index)">{{ index }}</a>'+
     '</li>'+
-    '<li v-if="cur!=all"><a v-on:click="cur++">下一页</a></li>'+
+    '<li v-if="cur!=all"><a v-on:click="btnClick(cur+1);cur++">下一页</a></li>'+
     '<li><a>共<i>{{all}}</i>页</a></li>'+
     '</ul>'+
     '</div>'
