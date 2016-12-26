@@ -46,6 +46,9 @@ class User extends Controller{
          return json($data);
       }
       $password  = input('request.password');
+      if(empty($username) || empty($password)){
+        return \app\index\model\Util::json(-1, '参数不能为空');
+      }
       $is = \app\index\model\User::addUser($username, $password);
       if($is){
         $data['code'] = 1;

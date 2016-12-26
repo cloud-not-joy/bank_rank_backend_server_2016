@@ -27,7 +27,7 @@ class Gift extends Controller{
 	 */
 	public function addGift(){
 		$param = Request::instance()->param();
-		if(empty($param)){
+		if(empty($param['gift_name']) || empty($param['gift_img']) || empty($param['integral'])){
 			$data['code'] = -1;
 			$data['msg']  = '参数不能为空';
 			return json($data);
@@ -93,14 +93,11 @@ class Gift extends Controller{
 	 */
 	public function updateGift(){
 		$param = Request::instance()->param();
-		
-		if(empty($param['g_id']) || empty($param)){
-	
+		if(empty($param['g_id']) || empty($param['gift_name']) || empty($param['gift_img']) || empty($param['integral'])){
 			$data['code'] = -1;
 			$data['msg']  = '参数不能为空';
 			return json($data);
 		}
-		
 		$temp = $this->checkLevel($param['integral']);
 		$param['level_id'] = $temp['level_id'];
 		$is = \app\index\model\Gift::updateGift($param);

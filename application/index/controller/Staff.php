@@ -149,16 +149,12 @@ class Staff extends Controller{
     	}
 
     	$param = Request::instance()->param();
+    	if( empty($param['staff_id'])  || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
+    	{
+    		return \app\index\model\Util::json(-1, '参数不能为空');
+    	}
     	if(is_numeric($param['password'])){
     		$param['password'] = md5($param['password']);
-    	}
-		
-		if(empty($param['staff_id']) || empty($param)){
-	
-			$data['code'] = -1;
-			$data['msg']  = '参数不能为空';
-			return json($data);
-		}
 
 		$is = \app\index\model\StaffInfo::updateStaff($param);
 
@@ -178,6 +174,10 @@ class Staff extends Controller{
 	public function addStaff(){
     	//添加到数据源的信息表
     	$param = Request::instance()->param();
+    	if(empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
+    	{
+    		return \app\index\model\Util::json(-1, '参数不能为空');
+    	}
     	$param['add_time'] = date("Y-m-d H:i:s",time());
     	//查找本月数据是否存在条件
     	$where['staff_number'] = $param['staff_number'];
