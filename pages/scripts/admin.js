@@ -52,7 +52,8 @@ var adminStaffView = Vue.extend({
       pageData: {
         cur: 1,
         all: 1
-      }
+      },
+      appState: appState
     }
   },
   components:{
@@ -68,10 +69,10 @@ var adminStaffView = Vue.extend({
       this.isShowAddStaff = true;
       this.isAddStaff = true;
     },
-    checkNewStaff: function() {
+    checkNewStaff: function(_key) {
       var self = this;
       for (var item in self.newStaff) {
-        if (self.newStaff[item] === '' && item !== 'staff_id') {
+        if (self.newStaff[item] === '' && item !== 'staff_id' && item !== _key) {
           return false;
         }
       }
@@ -79,7 +80,7 @@ var adminStaffView = Vue.extend({
     },
     addStaff: function() {
       if (!this.checkNewStaff()) {
-        return alert("请完整填写用户信息");
+        return alert("请填写完整的用户信息");
       }
       apiStaffAdd(this.newStaff, (function(reponse) {
         var newArray = [].concat(this.staffs);
@@ -114,6 +115,16 @@ var adminStaffView = Vue.extend({
       this.newStaff = staff;
     },
     editStaff: function() {
+      if (!this.checkNewStaff('password')) {
+        return alert("有空白的字段未填写");
+      }
+      // if (!this.newStaff.password) {
+      //   this.newStaff.password = '';
+      // }
+      delete this.newStaff.goods;
+      apiStaffUpdate(this.newStaff, function(response) {
+
+      });
       this.clearStaff();
       // TODO 发送请求到服务器 才保存成功
       this.isShowAddStaff = false;

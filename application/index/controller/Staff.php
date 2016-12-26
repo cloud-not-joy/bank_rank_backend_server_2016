@@ -144,12 +144,13 @@ class Staff extends Controller{
      */
     public function updateStaff(){
     	$role = Session::get('ext_user.role');
-    	if($role != 1){
+//        return var_dump($role);
+    	if($role != '超级管理员'){
     		return \app\index\model\Util::json(-2, '只有超级管理员才能修改员工数据');
     	}
 
     	$param = Request::instance()->param();
-    	if( empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
+    	if(empty($param['staff_id']) || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']))
     	{
     		return \app\index\model\Util::json(-1, '参数不能为空');
     	}
@@ -175,8 +176,9 @@ class Staff extends Controller{
 	public function addStaff(){
     	//添加到数据源的信息表
     	$param = Request::instance()->param();
-    	if(empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
+    	if(empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || empty($param['password']))
     	{
+//            return var_dump($param['staff_name']);
     		return \app\index\model\Util::json(-1, '参数不能为空');
     	}
     	$param['add_time'] = date("Y-m-d H:i:s",time());
