@@ -25,13 +25,13 @@ class StaffInfo extends \think\Model{
         $res['page']  = $param['page']+1;
         return $res;
     }
-        /*删除礼物*/
+    /*删除员工*/
     public static function delStaff($where){
         return StaffInfo::destroy($where);
     }
-    /*修改礼物*/
-    public static function updateStaff($param){
-        return StaffInfo::update($param);
+    /*修改员工*/
+    public static function updateStaff($param,$map){
+        return StaffInfo::save($param,$map);
     }
 
 	/*管理员录入员工信息*/

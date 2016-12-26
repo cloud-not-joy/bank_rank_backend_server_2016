@@ -14,8 +14,8 @@ class Gift extends \think\Model{
 		return Gift::destroy($where);
 	}
 	/*修改礼物*/
-	public static function updateGift($param){
-		return Gift::update($param);
+	public static function updateGift($param,$map){
+		return Gift::save($param,$map);
 	}
 	/**
 	 * [getOne description]

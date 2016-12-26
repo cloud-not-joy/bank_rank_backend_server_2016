@@ -100,7 +100,9 @@ class Gift extends Controller{
 		}
 		$temp = $this->checkLevel($param['integral']);
 		$param['level_id'] = $temp['level_id'];
-		$is = \app\index\model\Gift::updateGift($param);
+		$map['g_id'] = $param['g_id'];
+		unset($param['g_id']);
+		$is = \app\index\model\Gift::updateGift($param , $map);
 
 		if($is){
 			$data['code'] = 1;

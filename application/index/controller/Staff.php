@@ -149,14 +149,14 @@ class Staff extends Controller{
     	}
 
     	$param = Request::instance()->param();
-    	if( empty($param['staff_id'])  || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
+    	$param = array_filter($param);
+    	if( empty($param['staff_id'])  || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) )
     	{
     		return \app\index\model\Util::json(-1, '参数不能为空');
     	}
-    	if(is_numeric($param['password'])){
-    		$param['password'] = md5($param['password']);
-
-		$is = \app\index\model\StaffInfo::updateStaff($param);
+    	$map['staff_id'] = $param['staff_id'];
+    	unset($param['staff_id']);
+		$is = \app\index\model\StaffInfo::updateStaff($param,$map);
 
 		if($is){
 			$data['code'] = 1;
