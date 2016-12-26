@@ -410,6 +410,12 @@ a:hover, a:focus {
   width: 100%;
 }
 
+.admin-staff-view .staff-table table .image img {
+  /*display: block;*/
+  width: 180px;
+  height: 180px;
+}
+
 .admin-staff-view .staff-table table th {
   line-height: 3;
   text-align: center;
@@ -467,6 +473,9 @@ a:hover, a:focus {
 
 .btn-div {
   text-align: center;
+}
+.btn-div button {
+  margin-right: 24px;
 }
 
 .staff-pagination {

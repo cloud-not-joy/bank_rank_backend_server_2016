@@ -79,9 +79,9 @@
                 </thead>
                 <tbody>
                 <tr v-for="itemGoods of goodsArray">
-                  <td>{{ itemGoods.name }}</td>
-                  <td class="image"><img :src="itemGoods.image" /></td>
-                  <td>{{ itemGoods.rank }}</td>
+                  <td>{{ itemGoods.gift_name }}</td>
+                  <td class="image"><img v-show="itemGoods.gift_img" :src="'../public/' + itemGoods.gift_img" /></td>
+                  <td>{{ itemGoods.integral }}</td>
                   <td>
                     <span class="operation-font edit" v-on:click="showEditGoods(itemGoods)">修改</span>
                     <span class="operation-font del" v-on:click="delGoods(itemGoods)">删除</span>
@@ -91,7 +91,7 @@
               </table>
             </div>
             <div class="clearfix staff-pagination">
-              <!--<vue-nav :cur.sync="pageDatas.cur" :all.sync="pageDatas.all" v-on:btn-click="listenPage"></vue-nav>-->
+              <vue-nav :cur.sync="pageData.cur" :all.sync="pageData.all" v-on:btn-click="listenPage"></vue-nav>
             </div>
           </div>
 
@@ -101,23 +101,25 @@
             <div class="staff-add-from">
               <div class="form-group">
                 <label>礼品名称：</label>
-                <input type="text" v-model="newGoods.name">
+                <input type="text" v-model="newGoods.gift_name">
               </div>
               <div class="form-group">
                 <label>兑换积分：</label>
-                <input type="text" v-model="newGoods.rank">
+                <input type="text" v-model="newGoods.integral">
               </div>
               <br>
               <div class="form-group">
                 <label>添加图片：</label>
-                <input type="file">
+                <input type="file" name="image" @change="preview">
               </div>
               <div class="form-group">
-                <img class="edit-goods-img" :src="newGoods.image" />
+                <img class="edit-goods-img" v-show="newGoods.gift_img" :src="'../public/' + newGoods.gift_img" />
               </div>
-
-              <button class="btn btn-success" v-on:click="addGoods()" v-show="isAddGoods">添加礼品</button>
-              <button class="btn btn-success" v-on:click="editGoods()" v-show="isEditGoods">提交修改</button>
+              <div class="form-group btn-div">
+                <button class="btn btn-default" v-on:click="closeEditGoods()">取消</button>
+                <button class="btn btn-success" v-on:click="addGoods()" v-show="isAddGoods">添加礼品</button>
+                <button class="btn btn-success" v-on:click="editGoods()" v-show="isEditGoods">提交修改</button>
+              </div>
             </div>
           </div>
         </div>

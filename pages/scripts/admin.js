@@ -193,10 +193,10 @@ var adminGoodsView = Vue.extend({
   data: function() {
     return {
       newGoods: {
-        id: '',
-        name: '',
-        rank: '',
-        image: 'http://imgsize.ph.126.net/?imgurl=http://img0.ph.126.net/90nkdAyVBSoD9qRxzsvBrg==/6631984758396348885.jpg_188x188x1.jpg'
+        g_id: '',
+        gift_name: '',
+        integral: '',
+        gift_img: ''
       },
       goodsArray: [],
       isShowAddGoods: false,
@@ -209,20 +209,71 @@ var adminGoodsView = Vue.extend({
     }
   },
   methods: {
+    closeEditGoods: function() {
+      this.isAddGoods = false;
+      this.isEditGoods = false;
+      this.isShowAddGoods = false;
+    },
+    preview: function (e) {
+      var self = this;
+      var file = e.target.files[0];
+      var supportedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+      if (file && supportedTypes.indexOf(file.type) >= 0) {
+        var formData = new FormData();
+        formData.append('image', file);
+        apiUploadFile(formData, function(response) {
+          self.newGoods.gift_img = response;
+        });
+      } else {
+        alert('文件格式只支持：jpg、jpeg 和 png');
+      }
+    },
+    getGifts: function(page, pageSize) {
+      var self = this;
+      apiGiftList({
+        page: page,
+        page_size: pageSize
+      }, function(response) {
+        self.goodsArray = response.data;
+        self.pageData.all = Math.floor(response.count / 10) + 1;
+      });
+    },
+    listenPage: function(page) {
+      this.pageData.cur = page;
+      this.getGifts(page, 10);
+      console.log('你点击了' + page + '页');
+    },
     showAddGoods: function() {
       this.isShowAddGoods = true;
       this.isAddGoods = true;
     },
-    addGoods: function() {
-      var newArray = [].concat(this.goodsArray);
-      newArray.push($.extend({}, this.newGoods, true));
-      this.goodsArray = newArray;
-      this.isShowAddGoods = false;
-      this.isAddGoods = false;
-
-      for (var _key in this.newGoods) {
-        this.newGoods[_key] = '';
+    checkNewGoods: function() {
+      var self = this;
+      for (var item in this.newGoods) {
+        if (self.newGoods[item] === '' && item != 'g_id') {
+          return false;
+        }
       }
+      return true;
+    },
+    addGoods: function() {
+      if (!this.checkNewGoods()) {
+        return alert("请填写完整的礼品信息");
+      }
+      apiGiftAdd(
+        this.newGoods,
+        (function() {
+          var newArray = [].concat(this.goodsArray);
+          newArray.push($.extend({}, this.newGoods, true));
+          this.goodsArray = newArray;
+          this.isShowAddGoods = false;
+          this.isAddGoods = false;
+
+          for (var _key in this.newGoods) {
+            this.newGoods[_key] = '';
+          }
+        }).bind(this)
+      )
     },
     showEditGoods: function(goodsItem) {
       this.isShowAddGoods = true;
@@ -230,24 +281,33 @@ var adminGoodsView = Vue.extend({
       this.newGoods = goodsItem;
     },
     editGoods: function() {
-      this.newGoods = {
+      if (!this.checkNewGoods()) {
+        return alert("请填写完整的礼品信息");
+      }
+      apiGiftUpdate(this.newGoods, (function() {
+        this.newGoods = {
           id: '',
           name: '',
           rank: '',
-          image: 'http://imgsize.ph.126.net/?imgurl=http://img0.ph.126.net/90nkdAyVBSoD9qRxzsvBrg==/6631984758396348885.jpg_188x188x1.jpg'
-      },
+          image: ''
+        },
 
-      this.isShowAddGoods = false;
-      this.isEditGoods = false;
+        this.isShowAddGoods = false;
+        this.isEditGoods = false;
+      }).bind(this));
     },
     delGoods: function(goodsItem) {
-      var newArray = [].concat(this.goodsArray);
-      newArray.forEach(function(item, index) {
-        if (item.id == goodsItem.id) {
-          newArray.splice(index, 1);
-        }
-      });
-      this.goodsArray = newArray;
+      apiGiftDel({
+        g_id: goodsItem.g_id
+      }, (function(){
+        var newArray = [].concat(this.goodsArray);
+        newArray.forEach(function(item, index) {
+          if (item.id == goodsItem.id) {
+            newArray.splice(index, 1);
+          }
+        });
+        this.goodsArray = newArray;
+      }).bind(this));
     }
   },
   beforeRouteEnter: function (to, from, next) {
@@ -255,7 +315,7 @@ var adminGoodsView = Vue.extend({
     // 不！能！获取组件实例 `this`
     // 因为当钩子执行前，组件实例还没被创建
     next(function(vm) {
-      vm.goodsArray = defaultDatas.goodsArray;
+      vm.getGifts(vm.pageData.cur, 10);
     });
   }
 });

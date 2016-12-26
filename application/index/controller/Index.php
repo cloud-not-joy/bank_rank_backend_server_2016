@@ -34,7 +34,7 @@ class Index extends Controller{
 	        // 成功上传后 获取上传信息
 	        $path = DS . 'uploads'.DS.$info->getSaveName();
 	        $data['code'] = 1;
-	        $data['path'] = $path;
+	        $data['data'] = $path;
 	    }else{
 	        // 上传失败获取错误信息
 	        $data['code'] = 0;

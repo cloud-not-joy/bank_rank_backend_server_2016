@@ -53,6 +53,24 @@ var makePost = function(url) {
   };
 }
 
+var makeFile = function(url) {
+  return function(data, callback) {
+    $.ajax({
+      url: domain + url ,
+      type: 'POST',
+      data: data,
+      async: false,
+      cache: false,
+      contentType: false,
+      processData: false
+    }).done(function(data) {
+        paseJson(data, callback);
+    }).fail(function(err) {
+        errorAlert(err);
+    });;
+  }
+}
+
 var paseJson = function(response, callback) {
   if (typeof response === 'string') {
     response = JSON.parse(response);
@@ -75,6 +93,13 @@ var apiStaffAdd = makePost('/staff/addStaff');
 var apiStaffUpdate = makePost('/staff/updateStaff');
 var apiStaffDel = makePost('/staff/delStaff');
 var apiStaffExport = makePost('/staff/export');
+
+var apiGiftList = makeGet('/gift/giftList');
+var apiGiftUpdate = makePost('/gift/updateGift');
+var apiGiftDel = makePost('/gift/delGift');
+var apiGiftAdd = makePost('/gift/addGift');
+
+var apiUploadFile = makeFile('/index/upload');
 
 var apiStaffExchangeHistory = makeGet('/exchange/history');
 var apiStaffExchange = makePost('/exchange/do');
