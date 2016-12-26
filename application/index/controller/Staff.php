@@ -149,7 +149,7 @@ class Staff extends Controller{
     	}
 
     	$param = Request::instance()->param();
-    	if( empty($param['staff_id'])  || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
+    	if( empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) || $param['password'])
     	{
     		return \app\index\model\Util::json(-1, '参数不能为空');
     	}
