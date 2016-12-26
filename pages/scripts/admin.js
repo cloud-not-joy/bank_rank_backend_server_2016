@@ -152,7 +152,7 @@ var adminStaffView = Vue.extend({
       }, (function() {
         var _array = [].concat(this.staffs);
         _array.forEach(function(item, index) {
-          if (item.id === staff.id) {
+          if (item.staff_id === staff.staff_id) {
             _array.splice(index, 1);
           }
         });
