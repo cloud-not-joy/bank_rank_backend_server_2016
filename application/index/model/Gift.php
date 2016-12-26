@@ -5,8 +5,8 @@ use think\Input;
 class Gift extends \think\Model{
 	/*添加礼物*/
 	public static function addGift($param){
-		$staff = new Gift($param);
-        $res = $staff->allowField(true)->save(); 
+		$gift = new Gift($param);
+        $res = $gift->allowField(true)->save(); 
         return $res;       
 	}
 	/*删除礼物*/
@@ -15,7 +15,8 @@ class Gift extends \think\Model{
 	}
 	/*修改礼物*/
 	public static function updateGift($param,$map){
-		return Gift::save($param,$map);
+        $gift = new Gift();
+		return $gift->save($param,$map);
 	}
 	/**
 	 * [getOne description]
