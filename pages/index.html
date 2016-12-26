@@ -186,11 +186,11 @@
           <div class="staff-add-from">
             <div class="form-group">
               <label>员工名称：</label>
-              <input type="text" v-model="newStaff.name">
+              <input type="text" v-model="newStaff.staff_name">
             </div>
             <div class="form-group">
               <label>员工号：</label>
-              <input type="text" v-model="newStaff.id">
+              <input type="text" v-model="newStaff.staaff_number">
             </div>
             <div class="form-group">
               <label>部门名称：</label>
@@ -198,39 +198,42 @@
             </div>
             <div class="form-group">
               <label>角色：</label>
-              <input type="text" v-model="newStaff.role">
+              <input type="text" v-model="newStaff.staff_role">
             </div>
             <div class="form-group">
               <label>月末任务定额：</label>
-              <input type="text" v-model="newStaff.quota">
+              <input type="text" v-model="newStaff.standard">
             </div>
             <div class="form-group">
               <label>上期存款：</label>
-              <input type="text" v-model="newStaff.previousDeposit">
+              <input type="text" v-model="newStaff.previous_deposit">
             </div>
             <div class="form-group">
               <label>本期存款：</label>
-              <input type="text" v-model="newStaff.currentDeposit">
+              <input type="text" v-model="newStaff.current_deposit">
             </div>
             <!--<div class="form-group">-->
               <!--<label>累计积分：</label>-->
-              <!--<input type="text" v-model="newStaff.cumulativeRank">-->
+              <!--<input type="text" v-model="newStaff.accumulate">-->
             <!--</div>-->
             <!--<div class="form-group">-->
               <!--<label>已兑换积分：</label>-->
-              <!--<input type="text" v-model="newStaff.exchangedRank">-->
+              <!--<input type="text" v-model="newStaff.consume">-->
             <!--</div>-->
             <!--<div class="form-group">-->
               <!--<label>剩余积分：</label>-->
-              <!--<input type="text" v-model="newStaff.remainRank">-->
+              <!--<input type="text" v-model="newStaff.current_integral">-->
             <!--</div>-->
             <div class="form-group">
               <label>初始密码：</label>
               <input type="text" v-model="newStaff.password">
             </div>
 
-            <button class="btn btn-success" v-on:click="addStaff()" v-show="isAddStaff">添加员工</button>
-            <button class="btn btn-success" v-on:click="editStaff()" v-show="isEditStaff">提交修改</button>
+            <div class="form-group btn-div">
+              <button class="btn btn-default" v-on:click="closeEditStaff()">取消</button>
+              <button class="btn btn-success" v-on:click="addStaff()" v-show="isAddStaff">添加员工</button>
+              <button class="btn btn-success" v-on:click="editStaff()" v-show="isEditStaff">提交修改</button>
+            </div>
           </div>
         </div>
 
@@ -464,6 +467,6 @@
     <script src="scripts/staff.js"></script>
     <script src="scripts/admin.js"></script>
     <script src="scripts/main.js"></script>
-    <!-- endbuild -->c
+    <!-- endbuild -->
   </body>
 </html>

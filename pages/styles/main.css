@@ -460,9 +460,13 @@ a:hover, a:focus {
 }
 
 .admin-staff-view .staff-add-from button {
-  display: block;
-  padding: 5px 30px;
-  margin: 20px auto;
+  /*display: block;*/
+  width: 120px;
+  text-align: center;
+}
+
+.btn-div {
+  text-align: center;
 }
 
 .staff-pagination {

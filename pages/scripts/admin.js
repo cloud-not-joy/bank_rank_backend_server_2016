@@ -31,16 +31,17 @@ var adminStaffView = Vue.extend({
     return {
       test: 'staff',
       newStaff: {
-        name: '',
-        id: '',
+        staff_name: '',
+        staff_id: '',
+        staff_number: '',
         department: '',
-        role: '',
-        quota: '',
-        previousDeposit: '',
-        currentDeposit: '',
-        // cumulativeRank: '',
-        // exchangedRank: '',
-        // remainRank: '',
+        staff_role: '',
+        standard: '',
+        previous_deposit: '',
+        current_deposit: '',
+        accumulate: '',
+        consume: '',
+        current_integral: '',
         password: ''
       },
       staffs: [],
@@ -68,16 +69,19 @@ var adminStaffView = Vue.extend({
       this.isAddStaff = true;
     },
     addStaff: function() {
-      var newArray = [].concat(this.staffs);
-      newArray.push($.extend({}, this.newStaff));
-      this.staffs = newArray;
 
-      this.isShowAddStaff = false;
-      this.isAddStaff = false;
+      apiStaffAdd(this.newStaff, function(reponse) {
+        var newArray = [].concat(this.staffs);
+        newArray.push($.extend({}, this.newStaff));
+        this.staffs = newArray;
 
-      for (var _key in this.newStaff) {
-        this.newStaff[_key] = '';
-      }
+        this.isShowAddStaff = false;
+        this.isAddStaff = false;
+
+        for (var _key in this.newStaff) {
+          this.newStaff[_key] = '';
+        }
+      });
     },
     // 显示员工兑换记录
     showOneStaffExchange: function(itemStaff) {
@@ -99,22 +103,26 @@ var adminStaffView = Vue.extend({
       this.newStaff = staff;
     },
     editStaff: function() {
-      this.newStaff = {
-        name: '',
-          id: '',
-          department: '',
-          role: '',
-          quota: '',
-          previousDeposit: '',
-          currentDeposit: '',
-          // cumulativeRank: '',
-          // exchangedRank: '',
-          // remainRank: '',
-          password: ''
-      };
+      this.clearStaff();
       // TODO 发送请求到服务器 才保存成功
       this.isShowAddStaff = false;
       this.isEditStaff = false;
+    },
+    clearStaff: function() {
+      this.newStaff = {
+        staff_name: '',
+        staff_id: '',
+        staff_number: '',
+        department: '',
+        staff_role: '',
+        standard: '',
+        previous_deposit: '',
+        current_deposit: '',
+        accumulate: '',
+        consume: '',
+        current_integral: '',
+        password: ''
+      }
     },
     delStaff: function(staff) {
       var _array = [].concat(this.staffs);
@@ -134,6 +142,12 @@ var adminStaffView = Vue.extend({
         self.staffs = response.staffs;
         self.pageData.all = Math.floor(response.count / 10) + 1;
       });
+    },
+    closeEditStaff: function() {
+      this.isShowAddStaff = false;
+      this.isAddStaff = false;
+      this.isEditStaff = false;
+      this.clearStaff();
     }
   },
   beforeRouteEnter: function (to, from, next) {
