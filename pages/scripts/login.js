@@ -20,9 +20,9 @@ var loginView = Vue.extend({
       if (!this.password) {
         return tipsAlert("密码不能为空");
       }
-      if (this.username === 'admin') {
-        return appState.router.push('/admin/staff');
-      }
+      // if (this.username === 'admin') {
+      //   return appState.router.push('/admin/staff');
+      // }
       // appState.router.push('/staff');
       apiForLogin({
         username: this.username,

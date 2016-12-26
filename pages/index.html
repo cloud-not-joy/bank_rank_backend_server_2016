@@ -168,7 +168,7 @@
                   <td>{{ itemStaff.current_integral }}</td>
                   <td>{{ itemStaff.goods }}</td>
                   <td>
-                    <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)">修改</span>
+                    <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)" v-show="appState.role==='超级管理员'">修改</span>
                     <span class="operation-font del" v-on:click="delStaff(itemStaff)">删除</span>
                   </td>
                 </tr>
