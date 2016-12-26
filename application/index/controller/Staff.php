@@ -210,7 +210,7 @@ class Staff extends Controller{
 	    // 移动到框架应用根目录/public/uploads/ 目录下
 	    $info = $file->validate(['ext'=>'xlsx'])->move(ROOT_PATH . 'public' . DS . 'uploads');
 	    if($info){
-	         $path = '.'.DS . 'uploads'.DS.$info->getSaveName();
+	         $path = '.'.DS . 'public'.DS.'uploads'.DS.$info->getSaveName();
 	         //var_dump($path);
 	         $data = $this->doImport($path);
 	    }else{
@@ -222,9 +222,8 @@ class Staff extends Controller{
 	    return json($data);
 	}
 	/*员工数据信息导入*/
-	public function doImport($path="./uploads/20161223/9bc4e4cdc0941244bbd629f58fa6471c.xlsx"){
-		var_dump($path);
-
+	public function doImport($path="./public/uploads/20161227/9c1e6eaa38995c7a326d99f97d9a288e.xlsx"){
+		//var_dump($path);
 		$res = Loader::import('PHPExcel.PHPExcel.IOFactory',EXTEND_PATH);
 		
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
@@ -238,7 +237,7 @@ class Staff extends Controller{
         $arr = $info['Sheet1']; 
        	unset($arr[0]);
        	sort($arr);
-       //	var_dump($arr);
+        // var_dump($arr);
        	if(empty($arr)){
        		$data['code'] = -3;
     		$data['msg']  = '导入数据不能为空!';
@@ -265,7 +264,8 @@ class Staff extends Controller{
        	//获取上期存款信息
        	$preInfo = \app\index\model\StaffInfo::getByNumber($map,$field);
        	//如果是第一次导入系统 上期存款信息为空
-       	
+       	//print_r($preInfo);
+       	//die;
        	$_preInfo = array();
        	$flag = 0;
 
@@ -333,7 +333,10 @@ class Staff extends Controller{
 		    
 			}
        	}
+
        	if(!empty($arrData)){
+       			// print_r($arrData);
+       			// die;
        		$_is = \app\index\model\StaffInfo::addAll($arrData);
        	}
 
@@ -354,9 +357,12 @@ class Staff extends Controller{
 	    			$accumulate['standard'] = $standard[$k]['standard'];
 	    			$updateArr[]=$accumulate;
 	    		}
+	    			//print_r($updateArr);
 
 
 	    		$isUpdate = \app\index\model\StaffInfo::updateAll($updateArr);
+	    		// print_r($isUpdate);
+	    		// die;
 	    	
 	    		if($isUpdate){
 	    			//4、通过累计积分更新能兑换礼品等级表信息
@@ -368,12 +374,15 @@ class Staff extends Controller{
 	    			$data['msg']  = '员工数据更新失败!';
 	    		}
     		}
+
     		if(is_array($_is)){
+    			
     			$isUpdateLeve = $this->checkIntegarl($_is , true);
     		}
     		// var_dump($isUpdateLeve);
     		// die;
     		if($isUpdateLeve){
+
 				$data['code'] = 1;
 				$data['msg']  = '导入成功!';
 			}else{
@@ -385,7 +394,8 @@ class Staff extends Controller{
     		$data['msg']  = '导入失败';
     	}
 
-        return $data;
+       // var_dump($data);
+       return json($data);
 	}
 	/**
 	 * [checkIntegarl 获取员工积分的]
@@ -419,15 +429,20 @@ class Staff extends Controller{
 			}else{
 				$tmp['level_id'] = 6;
 			}
-			$data = \app\index\model\Level::getOne($tmp);
+			$field = 'level_id,staff_id,is_right,evet_time';
+			$data = \app\index\model\Level::getOne($tmp,$field);
 			//如果满足条件 无记录则添加记录 添加时间
 			if(empty($data)){
+
 				$level = $tmp['level_id'];
+
 				for ($i= 1 ; $i <= $level; $i++) {
-					$tmp['level_id'] = $level[$i];
+					$tmp['level_id'] = $i;
 					$tmp['evet_time'] = time();
 					$tmp['is_right'] = 0;
 					$tmp['min_integral'] = $integer;
+					// var_dump($tmp);
+					// die;
 					$isAdd = \app\index\model\Level::addOne($tmp);
 				}
 				return $isAdd;
@@ -436,8 +451,9 @@ class Staff extends Controller{
 				$preTime = strtotime("-".$num.' month');
 				// print_r( $preTime-$data['evet_time']);
 				// print_r($data);
+				// die;
 				if($data['is_right']){
-					return true;
+					continue;
 				}
 				if($preTime > $data['evet_time']){
 					$map['is_right'] = 1;
