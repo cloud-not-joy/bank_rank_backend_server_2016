@@ -18,7 +18,7 @@ class Gift extends Controller{
     	$field ='g_id,gift_name,integral,gift_img';
     	$list = \app\index\model\Gift::getPageData($data,$field);
     	if(!empty($list)){
-    		return \app\index\model\Util::json(1, '返回员工数据', $list);
+    		return \app\index\model\Util::json(1, '返回礼品数据', $list);
     	}
 
 	}
@@ -100,6 +100,9 @@ class Gift extends Controller{
 			$data['msg']  = '参数不能为空';
 			return json($data);
 		}
+		
+		$temp = $this->checkLevel($param['integral']);
+		$param['level_id'] = $temp['level_id'];
 		$is = \app\index\model\Gift::updateGift($param);
 
 		if($is){

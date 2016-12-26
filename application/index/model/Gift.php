@@ -40,7 +40,8 @@ class Gift extends \think\Model{
         $list = $gift->field($field)->where($where)->select();
         $res = array();
         foreach($list as $key=>$val){ 
-            $res[] = $val->toArray();
+            $tmp = $val->toArray();
+            array_push($res,$tmp);
         } 
         return $res;
     
@@ -50,12 +51,13 @@ class Gift extends \think\Model{
         // 查询数据集
         $list = Gift::field($field)->limit($param['page'],$param['page_size'])->order('integral', 'desc')->select();
        // echo Gift::getLastSql();
-
+        $_list = array();
         $count = Gift::count();
         foreach ($list as $k => $val) {
             $tmp = $val->toArray(); 
-            $res[] = $tmp;
+            array_push($_list, $tmp);
         }
+        $res['data']  = $_list;
         $res['count'] = $count;
         $res['page']  = $param['page']+1;
         return $res;

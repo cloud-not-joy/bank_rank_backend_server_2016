@@ -39,12 +39,20 @@ class User extends Controller{
         return json(["code"=>-1,"msg"=>"只有超级管理员有添加普通管理员权限"]);
       }
       $username = input('request.username');
+      $_is= \app\index\model\User::searchOne(array('username'=>$username));
+      if(!empty($_is)){
+         $data['code'] = -2;
+         $data['msg']  = '此管理员已经存在！';
+         return json($data);
+      }
       $password  = input('request.password');
       $is = \app\index\model\User::addUser($username, $password);
       if($is){
         $data['code'] = 1;
+        $data['msg']  = '添加成功';
       }else{
         $data['code'] = 0;
+        $data['msg']  = '添加失败';
       }
       return json($data);
     }
@@ -54,7 +62,21 @@ class User extends Controller{
       $username = Session::get('ext_user.username');
       $new_password  = input('request.new_password');
       $old_password  = input('request.old_password');
-      $is = \app\index\model\User::updatePassword($username, $old_password,$new_password);
+      if(empty($username) || empty($new_password) ||empty($old_password)){
+        return \app\index\model\Util::json(-1, '参数不能为空');
+      }
+     
+      $role = Session::get('ext_user.role');
+
+      if(!empty($role) && ($role =="管理员"|| $role == "超级管理员")){
+        $is = \app\index\model\User::updatePassword($username, $old_password,$new_password);
+      }else{
+
+        $map['staff_number'] = $username;
+        $param['password']    = md5($new_password);
+        $is = \app\index\model\StaffInfo::updateOne($param,$map);
+      // echo  \app\index\model\StaffInfo::getLastSql();
+      }
       if($is){
         $data['code'] = 1;
       }else{

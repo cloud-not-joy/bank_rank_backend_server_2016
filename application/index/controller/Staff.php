@@ -55,10 +55,10 @@ class Staff extends Controller{
 			
 
 		}
+		$result['staffs'] = array();
+		array_push($result['staffs'],$list);
 
-    	return json($list);
-
-
+    	return \app\index\model\Util::json(1, '返回员工数据', $result);
 	}
 	/**
 	 * [getRecord 得到记录]
@@ -71,9 +71,9 @@ class Staff extends Controller{
 			$err['msg']  ='参数不能为空';
 			return json($err);
 		}
-		$field = 'traff_id,gift_name,use_integral,ver_code,is_confirm';
+		$field = 'staff_id,gift_name,use_integral,ver_code,is_confirm';
 		$list = \app\index\model\Trade::getDatas($data , $field);
-		return json($list);
+		return \app\index\model\Util::json(1, '获取员工兑换记录', $list);
 
 	}
 	/**
