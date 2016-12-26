@@ -52,7 +52,11 @@ var app = new Vue({
 
 if (!window.location.hash.replace('#/', '')) {
   router.push('/login');
+}
 
+
+if (window.localStorage.getItem('rank_role')) {
+  appState.role = window.localStorage.getItem('rank_role');
 }
 
 // if (!appState.isLogin) {

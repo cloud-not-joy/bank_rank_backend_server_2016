@@ -31,6 +31,7 @@ var loginView = Vue.extend({
         // TODO 这里登陆角色跳转到不同到view
         appState.isLogin = true;
         appState.role = data.role;
+        window.localStorage.setItem('rank_role', data.role);
         if (data.role === '员工') {
           appState.router.push('/staff');
         } else {

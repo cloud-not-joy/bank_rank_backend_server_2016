@@ -147,13 +147,17 @@ var adminStaffView = Vue.extend({
       }
     },
     delStaff: function(staff) {
-      var _array = [].concat(this.staffs);
-      _array.forEach(function(item, index) {
-        if (item.id === staff.id) {
-          _array.splice(index, 1);
-        }
-      });
-      this.staffs = _array;
+      apiStaffDel({
+        staff_id: staff.staff_id
+      }, (function() {
+        var _array = [].concat(this.staffs);
+        _array.forEach(function(item, index) {
+          if (item.id === staff.id) {
+            _array.splice(index, 1);
+          }
+        });
+        this.staffs = _array;
+      }).bind(this))
     },
     getStaffs: function(page, pageSize) {
       var self = this;

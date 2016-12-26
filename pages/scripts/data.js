@@ -73,6 +73,7 @@ var apiGoodsList = makeGet('/goods/list');
 var apiStaffList = makeGet('/staff/getStaffList');
 var apiStaffAdd = makePost('/staff/addStaff');
 var apiStaffUpdate = makePost('/staff/updateStaff');
+var apiStaffDel = makePost('/staff/delStaff');
 
 var apiStaffExchangeHistory = makeGet('/exchange/history');
 var apiStaffExchange = makePost('/exchange/do');
