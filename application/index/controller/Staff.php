@@ -9,6 +9,14 @@ use PHPExcel_IOFactory;
 use PHPExcel;
 
 class Staff extends Controller{
+
+	public function __construct(){  
+        $role = Session::get('ext_user.role');
+        //var_dump($role);
+        if(empty($role) || $role != '超级管理员' || $role != '管理员') {
+        	return \app\index\model\Util::json(-6, '只有管理员才能操作！');
+        }
+    }  
 	/**
 	 * [search 操作管理员对员工管理界面的快速搜索]
 	 * @return [type] [description]
@@ -217,9 +225,9 @@ class Staff extends Controller{
 	        // 上传失败获取错误信息
 	        $data['code'] = 0;
 	        $data['msg'] = $file->getError();
-	        
+	         
 	    }
-	    return json($data);
+	   return json($data); 
 	}
 	/*员工数据信息导入*/
 	public function doImport($path="./public/uploads/20161227/9c1e6eaa38995c7a326d99f97d9a288e.xlsx"){
@@ -394,8 +402,8 @@ class Staff extends Controller{
     		$data['msg']  = '导入失败';
     	}
 
-       // var_dump($data);
-       return json($data);
+       //var_dump($data);
+       return $data;
 	}
 	/**
 	 * [checkIntegarl 获取员工积分的]

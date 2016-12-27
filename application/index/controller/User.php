@@ -15,6 +15,22 @@ class User extends Controller{
        return $this->fetch(); 
     }
     /**
+     * [getRecord description]
+     * @return [type] [description]
+     */
+    public function getRecordSelf(){
+      $data['staff_number'] = Session::get('ext_user.staff_number');
+      if(empty($data['staff_number'])){
+        $err['code'] =-1;
+        $err['msg']  ='请登录';
+        return json($err);
+      }
+      $field = 'staff_id,trade_id,gift_name,use_integral,ver_code,is_confirm';
+      $list = \app\index\model\Trade::getDatas($data , $field);
+      return \app\index\model\Util::json(1, '获取员工兑换记录', $list);
+
+    }
+    /**
      * [getOneInfo 获取登录用户的基本信息]
      * @return [type] [description]
      */
