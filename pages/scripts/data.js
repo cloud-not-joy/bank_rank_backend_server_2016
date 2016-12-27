@@ -92,7 +92,12 @@ var apiStaffList = makeGet('/staff/getStaffList');
 var apiStaffAdd = makePost('/staff/addStaff');
 var apiStaffUpdate = makePost('/staff/updateStaff');
 var apiStaffDel = makePost('/staff/delStaff');
+var apiStaffSeach = makeGet('/staff/search');
+var apiStaffRecord = makeGet('/staff/getRecord');
+var apiStaffImport = makeFile('/staff/import');
 var apiStaffExport = makePost('/staff/export');
+
+var apiTradeConfirm = makePost('/trade/check');
 
 var apiGiftList = makeGet('/gift/giftList');
 var apiGiftUpdate = makePost('/gift/updateGift');

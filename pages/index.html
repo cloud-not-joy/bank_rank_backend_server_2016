@@ -130,13 +130,14 @@
       <div class="admin-staff-view">
         <div class="admin-stall-list" v-show="!isShowAddStaff">
           <p class="add-staff-p btn btn-primary btn-sm" v-on:click="showAddStaff()"><span class="glyphicon glyphicon-plus"></span><span class="add-staff">添加员工</span></p>
-          <p style="float: right;margin: 15px;">
+          <p style="float: right;margin: 15px; position: relative">
             <a href="../index.php/staff/export" target="_blank"><button type="button" class="btn btn-primary btn-sm">导出数据</button></a>
+            <input type="file" class="import-staff-data" @change="uploadStaffData">
             <button type="button" class="btn btn-primary btn-sm">导入数据</button>
           </p>
           <div class="form-group" style="margin: 15px;">
-            <input type="text" class="form-control" placeholder="请输入关键字"style="height: 33px;display: inline-block;">
-            <button class="btn btn-primary btn-sm" type="button">search</button>
+            <input type="text" class="form-control" placeholder="请输入员工号或者兑换码" v-model="searchKey" style="height: 33px;display: inline-block;">
+            <button class="btn btn-primary btn-sm" type="button" v-on:click="search()">搜索</button>
           </div>
           <div class="staff-table">
             <table class="table-bordered">
@@ -251,13 +252,15 @@
                     <li>
                       <span class="title-name">商品名称</span>
                       <span class="title-name">消耗积分</span>
+                      <span class="title-name">兑换码</span>
                     </li>
                     <li class="history-li" v-for="item of currentStaffExchangeRecard">
-                      <span class="name">{{ item.name }}</span>
-                      <span class="name">{{ item.rank }}</span>
+                      <span class="name">{{ item.gift_name }}</span>
+                      <span class="name">{{ item.use_integral }}</span>
+                      <span class="name">{{ item.ver_code }}</span>
                       <span class="name">
-                        <button class="btn btn-success" v-show="!item.isConfirm" v-on:click="confirmExchange(item)">确认</button>
-                        <button class="btn disabled btn-default" v-show="item.isConfirm">已兑换</button>
+                        <button class="btn btn-success" v-show="!item.is_confirm" v-on:click="confirmExchange(item)">确认</button>
+                        <button class="btn disabled btn-default" v-show="item.is_confirm">已兑换</button>
                       </span>
                     </li>
                   </ul>
@@ -288,10 +291,10 @@
         <div class="admin-container clearfix">
           <div class="admin-left-menu">
             <ul>
-              <router-link to="/admin/staff"><li class="active">人员管理</li></router-link>
+              <router-link to="/admin/staff" active-class="active"><li>人员管理</li></router-link>
 
-              <router-link to="/admin/goods"><li>礼品管理</li></router-link>
-              <router-link to="/admin/system"><li>系统设置</li></router-link>
+              <router-link to="/admin/goods" active-class="active"><li>礼品管理</li></router-link>
+              <router-link to="/admin/system" active-class="active"><li>系统设置</li></router-link>
             </ul>
           </div>
 

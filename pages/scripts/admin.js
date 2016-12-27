@@ -53,14 +53,45 @@ var adminStaffView = Vue.extend({
         cur: 1,
         all: 1
       },
-      appState: appState
+      appState: appState,
+      searchKey: ""
     }
   },
   components:{
     'vue-nav': Vnav
   },
   methods: {
-    listenPage:function(page){
+    uploadStaffData: function(e) {
+      var self = this;
+      var file = e.target.files[0];
+      var supportedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+      if (file && supportedTypes.indexOf(file.type) >= 0) {
+        var formData = new FormData();
+        formData.append('image', file);
+        apiStaffImport(formData, function(response) {
+          alert("导入成功");
+          window.location.reload();
+          // self.newGoods.gift_img = response;
+        });
+      } else {
+        alert('文件格式只支持：xlsx');
+      }
+    },
+    search: function() {
+      this.pageData = {
+        cur: 1,
+        all: 1
+      }
+      if (!this.searchKey) {
+        return this.getStaffs(1, 10);
+      }
+      apiStaffSeach({
+        key: this.searchKey
+      }, (function(response) {
+        this.staffs = response.staffs;
+      }).bind(this))
+    },
+    listenPage: function(page){
       this.pageData.cur = page;
       this.getStaffs(page, 10);
       console.log('你点击了' + page + '页');
@@ -97,14 +128,26 @@ var adminStaffView = Vue.extend({
     },
     // 显示员工兑换记录
     showOneStaffExchange: function(itemStaff) {
-      $(".staff-exchange-history").modal('show');
-      
-      // TODO 这里需要请求数据
-      this.currentStaffExchangeRecard = defaultDatas.staffExchangeRecards;
+
+      apiStaffRecord({
+        number: itemStaff.staff_number
+      }, (function(response) {
+        $(".staff-exchange-history").modal('show');
+
+        // TODO 这里需要请求数据
+        this.currentStaffExchangeRecard = response;
+      }).bind(this));
     },
     // 确认兑换
     confirmExchange: function(item) {
-      item.isConfirm = true;
+      // var code = window.prompt("输入兑换码");
+      // if (String(item.ver_code) === code) {
+        apiTradeConfirm({
+          trade_id: item.trade_id
+        }, (function(response){
+          item.is_confirm = true;
+        }).bind(this))
+      // }
     },
     closeConfirm: function() {
       $(".staff-exchange-history").modal('hide');

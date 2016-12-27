@@ -71,7 +71,7 @@ class Staff extends Controller{
 			$err['msg']  ='参数不能为空';
 			return json($err);
 		}
-		$field = 'staff_id,gift_name,use_integral,ver_code,is_confirm';
+		$field = 'staff_id,trade_id,gift_name,use_integral,ver_code,is_confirm';
 		$list = \app\index\model\Trade::getDatas($data , $field);
 		return \app\index\model\Util::json(1, '获取员工兑换记录', $list);
 
