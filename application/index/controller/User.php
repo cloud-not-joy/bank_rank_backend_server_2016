@@ -51,7 +51,7 @@ class User extends Controller{
      */
     public function addUser(){
       $role = Session::get('ext_user.role');
-      if($role != 1){
+      if($role != '超级管理员'){
         return json(["code"=>-1,"msg"=>"只有超级管理员有添加普通管理员权限"]);
       }
       $username = input('request.username');
@@ -100,6 +100,7 @@ class User extends Controller{
         $data['code'] = 1;
       }else{
         $data['code'] = 0;
+        $data['msg'] = '旧密码错误';
       }
       return json($data);
        

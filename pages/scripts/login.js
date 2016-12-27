@@ -35,7 +35,9 @@ var loginView = Vue.extend({
           data.role = data.staff_role;
         }
         window.localStorage.setItem('rank_role', data.role);
-        if (data.role && data.role === '管理员' && data.role === '超级管理员') {
+        if (data.role && (data.role === '管理员' || data.role === '超级管理员')) {
+          appState.username = data.username;
+          window.localStorage.setItem('rank_name', data.username);
           appState.router.push('/admin/staff');
         } else {
           appState.router.push('/staff');

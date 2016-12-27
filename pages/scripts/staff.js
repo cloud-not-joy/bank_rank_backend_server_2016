@@ -84,7 +84,7 @@ var staffView = Vue.extend({
       $(".exchange-modal").modal('hide');
     },
     showExchangeHistory: function() {
-      apiStaffRecord({
+      apiUserTradeRecord({
         staff_number: this.staffInfo.staff_number
       }, (function(response){
         this.exchangeHistoryList = response;

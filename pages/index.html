@@ -38,26 +38,26 @@
           <h4 class="title">修改密码</h4>
           <div class="form-group">
             <label>旧密码：</label>
-            <input type="password">
+            <input type="password" v-model="oldPassword">
           </div>
           <div class="form-group">
             <label>新密码：</label>
-            <input type="password">
+            <input type="password" v-model="newPassword">
           </div>
-          <button class="btn btn-success" v-on:click="showSystem()">确认修改</button>
+          <button class="btn btn-success" v-on:click="editPassword()">确认修改</button>
         </div>
 
         <div class="edit-view add-admin-view" v-show="isShowAddAdmin">
           <h4 class="title">添加管理员</h4>
           <div class="form-group">
             <label>设置管理员账号：</label>
-            <input type="password">
+            <input type="text" v-model="username">
           </div>
           <div class="form-group">
             <label>设置管理员密码：</label>
-            <input type="password">
+            <input type="password" v-model="password">
           </div>
-          <button class="btn btn-success" v-on:click="showSystem()">确认修改</button>
+          <button class="btn btn-success" v-on:click="addUser()">确认修改</button>
         </div>
       </div>
     </script>
@@ -282,7 +282,7 @@
           <div class="header-content">
             <h3 class="title">积分兑换系统</h3>
             <div class="admin-info-div">
-              <p>欢迎你管理员 <span>美国队长</span></p>
+              <p>欢迎你管理员 <span>{{ username }}</span></p>
             </div>
             <h4 class="login-off" v-on:click="logoff()">退出登陆</h4>
           </div>

@@ -255,7 +255,7 @@ a:hover, a:focus {
 }
 
 .staff-view .exchange-history-list {
-  width: 300px;
+  width: 480px;
   margin: 0 auto;
   max-height: 300px;
   overflow-y: scroll;
@@ -266,8 +266,17 @@ a:hover, a:focus {
   line-height: 1.67;
 }
 
+.staff-view .exchange-history-list li span {
+  display: inline-block;
+  width: 140px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .staff-view .exchange-history-list li .rank {
-  float: right;
+  /*float: right;*/
 }
 
 .staff-view .exchange-history-list li:first-child {

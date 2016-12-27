@@ -88,6 +88,7 @@ var apiForLogin = makePost('/login/toLogin');
 var apiUserInfo = makeGet('/user/getOneInfo');
 var apiGoodsList = makeGet('/gift/giftList');
 var apiTradeGift = makeGet('/trade/getCode');
+var apiUserTradeRecord = makeGet('/user/getRecordSelf');
 
 var apiStaffList = makeGet('/staff/getStaffList');
 var apiStaffAdd = makePost('/staff/addStaff');
@@ -107,8 +108,5 @@ var apiGiftAdd = makePost('/gift/addGift');
 
 var apiUploadFile = makeFile('/index/upload');
 
-var apiStaffExchangeHistory = makeGet('/exchange/history');
-var apiStaffExchange = makePost('/exchange/do');
-
-
-var apiForMemeberIndex = makeGet('/memeber');
+var apiUserChangePassword = makePost('/user/changePsw');
+var apiNewAdmin = makePost('/user/addUser');

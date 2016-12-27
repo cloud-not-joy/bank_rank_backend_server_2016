@@ -1,5 +1,13 @@
 var adminView = Vue.extend({
   template: $("#admin-template").html(),
+  beforeRouteEnter: function (to, from, next) {
+    // 在渲染该组件的对应路由被 confirm 前调用
+    // 不！能！获取组件实例 `this`
+    // 因为当钩子执行前，组件实例还没被创建
+    next(function(vm) {
+      vm.username = window.localStorage.getItem('rank_name');
+    });
+  },
   mounted: function() {
     $(".admin-left-menu").on('click', function(event) {
       $('.admin-left-menu li').removeClass('active');
@@ -11,7 +19,8 @@ var adminView = Vue.extend({
   },
   data: function() {
     return {
-      isActive: ''
+      isActive: '',
+      username: ''
     }
   },
   methods: {
@@ -373,6 +382,10 @@ var adminSystemView = Vue.extend({
       isShowSystem: true,
       isShowAddAdmin: false,
       isShowEditPassword: false,
+      oldPassword: '',
+      newPassword: '',
+      username: '',
+      password: ''
     }
   },
   methods: {
@@ -388,6 +401,30 @@ var adminSystemView = Vue.extend({
       this.isShowSystem = true;
       this.isShowAddAdmin = false;
       this.isShowEditPassword = false;
+    },
+    editPassword: function() {
+      if (!this.newPassword || !this.oldPassword){
+        return alert("密码不能为空");
+      }
+      apiUserChangePassword({
+        new_password: this.newPassword,
+        old_password: this.oldPassword
+      }, (function(response){
+        alert("修改成功");
+        this.showSystem();
+      }).bind(this))
+    },
+    addUser: function() {
+      if (!this.username || !this.password){
+        return alert("用户名和密码不难为空");
+      }
+      apiNewAdmin({
+        username: this.username,
+        password: this.password
+      }, (function(response){
+        alert("添加成功");
+        this.showSystem();
+      }).bind(this));
     }
   }
 });
