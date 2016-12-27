@@ -28,7 +28,7 @@ class User extends Controller{
       }
       $where['staff_number'] = $username;
       $info = \app\index\model\StaffInfo::getOne($where);
-      return json($info);
+      return \app\index\model\Util::json(1, '返回用户数据', $info);
     }
     /**
      * [addUser 超级管理员添加管理员]

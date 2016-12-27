@@ -83,10 +83,11 @@ var paseJson = function(response, callback) {
 
 
 // API 定义
-
+var apiForLogoff = makePost('/user/logout');
 var apiForLogin = makePost('/login/toLogin');
-var apiUserInfo = makeGet('/user/info');
-var apiGoodsList = makeGet('/goods/list');
+var apiUserInfo = makeGet('/user/getOneInfo');
+var apiGoodsList = makeGet('/gift/giftList');
+var apiTradeGift = makeGet('/trade/getCode');
 
 var apiStaffList = makeGet('/staff/getStaffList');
 var apiStaffAdd = makePost('/staff/addStaff');

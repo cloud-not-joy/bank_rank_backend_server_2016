@@ -313,18 +313,18 @@
             <div class="staff-info-div">
               <table>
                 <tr>
-                  <td>{{ staffInfo.name }}</td>
-                  <td>{{ staffInfo.department }}</td>
-                  <td rowspan="2">{{ currentMonth }}月末任务额定:{{ staffInfo.quota }}</td>
-                  <td class="red-font">上期存款:{{ staffInfo.previousDeposit }}</td>
-                  <td class="red-font" rowspan="2">累计积分:{{ staffInfo.cumulativeRank }}</td>
-                  <td class="red-font" rowspan="2">已兑换积分:{{ staffInfo.exchangedRank }}</td>
-                  <td class="red-font" rowspan="2">剩余积分:{{ staffInfo.remainRank }}</td>
+                  <td>{{ staffInfo.staff_name }}</td>
+                  <td>部门:{{ staffInfo.department }}</td>
+                  <td rowspan="2">月末任务额定:{{ staffInfo.standard }}</td>
+                  <td class="red-font">上期存款:{{ staffInfo.previous_deposit }}</td>
+                  <td class="red-font" rowspan="2">累计积分:{{ staffInfo.accumulate }}</td>
+                  <td class="red-font" rowspan="2">已兑换积分:{{ staffInfo.consume }}</td>
+                  <td class="red-font" rowspan="2">剩余积分:{{ staffInfo.current_integral }}</td>
                 </tr>
                 <tr>
-                  <td>ID:{{ staffInfo.id }}</td>
+                  <td>ID:{{ staffInfo.staff_number }}</td>
                   <td></td>
-                  <td class="red-font">本期存款:{{ staffInfo.currentDeposit }}</td>
+                  <td class="red-font">本期存款:{{ staffInfo.current_deposit }}</td>
                 </tr>
                 <tr>
                 </tr>
@@ -344,11 +344,11 @@
             <div class="goods-list">
               <ul>
                 <li class="goods-item" v-for="itemGoods of goodsArray">
-                  <img :src="itemGoods.imgUrl" />
-                  <p class="title">{{itemGoods.name}}</p>
+                  <img :src="'../public/' + itemGoods.gift_img" />
+                  <p class="title">{{itemGoods.gift_name}}</p>
                   <p class="clearfix">
-                    <button class="btn btn-success" v-on:click="exchange()">兑换</button>
-                    <span class="goods-rank">兑换积分：{{itemGoods.rank}}</span>
+                    <button class="btn btn-success" v-on:click="exchange(itemGoods)">兑换</button>
+                    <span class="goods-rank">兑换积分：{{itemGoods.integral}}</span>
                   </p>
                 </li>
 
@@ -368,7 +368,7 @@
                 <p class="title">
                   确定兑换
                 </p>
-                <p class="alert-content">将扣除积分400</p>
+                <p class="alert-content">将扣除积分{{ exchangeGift.integral }}</p>
               </div>
               <div class="confirm-button clearfix">
                 <button class="cancel" v-on:click="closeConfirm()">取消</button>
@@ -386,8 +386,8 @@
                   兑换成功
                 </p>
                 <p class="alert-content">
-                  <span>你已成功兑换，兑换商品洗衣机</span><br>
-                  <span>兑换码：APP132</span>
+                  <span>你已成功兑换，兑换商品{{ exchangeGift.gift_name }}</span><br>
+                  <span>兑换码：{{ currentVerCode }}</span>
                 </p>
               </div>
               <div class="confirm-button clearfix">
@@ -406,10 +406,16 @@
                 </p>
                 <div class="alert-content">
                  <ul class="exchange-history-list">
-                  <li><span class="name">商品名称</span><span class="rank">消耗积分</span></li>
+                  <li>
+                    <span class="name">商品名称</span>
+                    <span class="rank">消耗积分</span>
+                    <span class="rank">兑换情况</span>
+                  </li>
                   <li v-for="item of exchangeHistoryList">
-                    <span class="name">{{ item.name }}</span>
-                    <span class="rank">{{ item.rank }}</span>
+                    <span class="name">{{ item.gift_name }}</span>
+                    <span class="rank">{{ item.use_integral }}</span>
+                    <span class="name" v-show="!item.is_confirm">兑换码:{{ item.ver_code }}</span>
+                    <span class="name" v-show="item.is_confirm">已兑换</span>
                   </li>
                  </ul>
                 </div>

@@ -19,7 +19,10 @@ var adminView = Vue.extend({
       this.isActive = name;
     },
     logoff: function() {
-      appState.router.push('/login');
+      apiForLogoff({}, function() {
+        window.localStorage.setItem('rank_role', '');
+        appState.router.push('/login');
+      });
     }
   }
 });

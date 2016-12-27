@@ -31,11 +31,14 @@ var loginView = Vue.extend({
         // TODO 这里登陆角色跳转到不同到view
         appState.isLogin = true;
         appState.role = data.role;
+        if (!data.role) {
+          data.role = data.staff_role;
+        }
         window.localStorage.setItem('rank_role', data.role);
-        if (data.role === '员工') {
-          appState.router.push('/staff');
-        } else {
+        if (data.role && data.role === '管理员' && data.role === '超级管理员') {
           appState.router.push('/admin/staff');
+        } else {
+          appState.router.push('/staff');
         }
       });
     }

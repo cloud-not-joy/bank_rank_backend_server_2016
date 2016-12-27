@@ -4,16 +4,17 @@ var staffView = Vue.extend({
     return {
       currentMonth: '',
       staffInfo: {
-        name: '',
-        id: '',
+        staff_name: '',
+        staff_id: '',
+        staff_number: '',
         department: '',
-        role: '',
-        quota: '',
-        previousDeposit: '',
-        currentDeposit: '',
-        cumulativeRank: '',
-        exchangedRank: '',
-        remainRank: '',
+        staff_role: '',
+        standard: '',
+        previous_deposit: '',
+        current_deposit: '',
+        accumulate: 0,
+        consume: 0,
+        current_integral: 0
       },
       currentGoods: {
 
@@ -24,16 +25,29 @@ var staffView = Vue.extend({
         cur: 1,
         all: 1
       },
-      currentPage: 1
+      currentPage: 1,
+      exchangeGift: {},
+      currentVerCode: '',
+      tradeRecord: []
     }
   },
-  mounted: function() {
-    var vm = this;
-    this.getGoodsLists();
-    apiUserInfo({}, function(response) {
-      vm.currentMonth = response.currentMonth;
-      vm.staffInfo = response.userInfo;
+  beforeRouteEnter: function (to, from, next) {
+    // 在渲染该组件的对应路由被 confirm 前调用
+    // 不！能！获取组件实例 `this`
+    // 因为当钩子执行前，组件实例还没被创建
+    next(function(vm) {
+      if (!window.localStorage.getItem('rank_role')) {
+        appState.router.push('/login');
+      }
+      vm.getGoodsLists();
+      apiUserInfo({}, function(response) {
+        // vm.currentMonth = response.currentMonth;
+        vm.staffInfo = response;
+      });
     });
+  },
+  mounted: function() {
+
     // this.goodsArray = defaultDatas.goodsArray;
   },
   components:{
@@ -43,30 +57,47 @@ var staffView = Vue.extend({
     getGoodsLists: function() {
       var vm = this;
       apiGoodsList({page: vm.currentPage}, function(response) {
-        vm.pageData.all = response.totalPages;
-        vm.goodsArray = response.lists;
+        vm.pageData.all = Math.floor(response.count / 10) + 1;
+        vm.goodsArray = response.data;
       });
     },
     listenStaffPage: function(page) {
       this.currentPage = page;
       this.getGoodsLists();
     },
-    exchange: function() {
+    exchange: function(gift) {
       // TODO 获取当前选中的商品信息
+      this.exchangeGift = gift;
       $(".exchange-confirm").modal('show');
     },
     sureConfirm: function() {
-      $(".exchange-ok").modal('show');
+      apiTradeGift({
+        gid: this.exchangeGift.g_id
+      }, (function(response) {
+        if (response) {
+          this.currentVerCode = response;
+          $(".exchange-ok").modal('show');
+        }
+      }).bind(this));
     },
     closeConfirm: function() {
       $(".exchange-modal").modal('hide');
     },
     showExchangeHistory: function() {
-      $(".exchange-history").modal('show');
-      this.exchangeHistoryList = defaultDatas.exchangeHistoryList;
+      apiStaffRecord({
+        staff_number: this.staffInfo.staff_number
+      }, (function(response){
+        this.exchangeHistoryList = response;
+        $(".exchange-history").modal('show');
+      }).bind(this));
+      
+      // this.exchangeHistoryList = defaultDatas.exchangeHistoryList;
     },
     logoff: function() {
-      appState.router.push('/login');
+      apiForLogoff({}, function() {
+        window.localStorage.setItem('rank_role', '');
+        appState.router.push('/login');
+      });
     }
   }
 })
