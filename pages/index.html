@@ -44,7 +44,10 @@
             <label>新密码：</label>
             <input type="password" v-model="newPassword">
           </div>
-          <button class="btn btn-success" v-on:click="editPassword()">确认修改</button>
+          <div class="form-group btn-div">
+            <button class="btn btn-default" v-on:click="cancelEditPassword()">取消</button>
+            <button class="btn btn-success" v-on:click="editPassword()">确认修改</button>
+          </div>
         </div>
 
         <div class="edit-view add-admin-view" v-show="isShowAddAdmin">
@@ -57,7 +60,10 @@
             <label>设置管理员密码：</label>
             <input type="password" v-model="password">
           </div>
-          <button class="btn btn-success" v-on:click="addUser()">确认修改</button>
+          <div class="form-group btn-div">
+            <button class="btn btn-default" v-on:click="cancelAddUser()">取消</button>
+            <button class="btn btn-success" v-on:click="addUser()">确认修改</button>
+          </div>
         </div>
       </div>
     </script>
@@ -169,7 +175,7 @@
                   <td>{{ itemStaff.accumulate }}</td>
                   <td class="exchange-rank" v-on:click="showOneStaffExchange(itemStaff)">{{ itemStaff.consume }}</td>
                   <td>{{ itemStaff.current_integral }}</td>
-                  <td>{{ itemStaff.goods }}</td>
+                  <td>{{ itemStaff.can }}</td>
                   <td>
                     <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)" v-show="appState.role==='超级管理员'">修改</span>
                     <span class="operation-font del" v-on:click="delStaff(itemStaff)">删除</span>
@@ -182,6 +188,24 @@
             <vue-nav :cur.sync="pageData.cur" :all.sync="pageData.all" v-on:btn-click="listenPage"></vue-nav>
           </div>
         </div>
+
+        <div class="modal fade exchange-modal del-confirm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="exchang-content">
+                <p class="title">
+                  确定删除
+                </p>
+                <p class="alert-content">删除后将不可恢复</p>
+              </div>
+              <div class="confirm-button clearfix">
+                <button class="cancel" v-on:click="cancleDel()">取消</button>
+                <button class="sure" v-on:click="confirmDel()">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         <div class="staff-add-view" v-show="isShowAddStaff">
           <h4 class="title" v-show="isAddStaff">添加员工</h4>

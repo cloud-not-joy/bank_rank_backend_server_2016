@@ -165,6 +165,13 @@ class Staff extends Controller{
     	}
     	$map['staff_id'] = $param['staff_id'];
     	unset($param['staff_id']);
+
+        // 有密码才改密码 没有就不改
+		if (empty($param['password'])) {
+			unset($param['password']);
+		} else {
+			$param['password'] = md5($param['password']);
+		}
 		$is = \app\index\model\StaffInfo::updateStaff($param,$map);
 
 		if($is){

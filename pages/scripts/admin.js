@@ -66,7 +66,8 @@ var adminStaffView = Vue.extend({
         all: 1
       },
       appState: appState,
-      searchKey: ""
+      searchKey: "",
+      deledStaff: {}
     }
   },
   components:{
@@ -176,8 +177,10 @@ var adminStaffView = Vue.extend({
       // if (!this.newStaff.password) {
       //   this.newStaff.password = '';
       // }
-      delete this.newStaff.goods;
-      apiStaffUpdate(this.newStaff, function(response) {
+      var _staff = $.extend({}, this.newStaff);
+      delete _staff.can;
+      delete _staff.goods;
+      apiStaffUpdate(_staff, function(response) {
 
       });
       this.clearStaff();
@@ -202,16 +205,25 @@ var adminStaffView = Vue.extend({
       }
     },
     delStaff: function(staff) {
+      this.deledStaff = staff;
+      $(".del-confirm").modal('show');
+    },
+    cancleDel: function() {
+      $(".del-confirm").modal('hide');
+    },
+    confirmDel: function() {
+      var vm = this;
       apiStaffDel({
-        staff_id: staff.staff_id
+        staff_id: this.deledStaff.staff_id
       }, (function() {
         var _array = [].concat(this.staffs);
         _array.forEach(function(item, index) {
-          if (item.staff_id === staff.staff_id) {
+          if (item.staff_id === vm.deledStaff.staff_id) {
             _array.splice(index, 1);
           }
         });
         this.staffs = _array;
+        $(".del-confirm").modal('hide');
       }).bind(this))
     },
     getStaffs: function(page, pageSize) {
@@ -425,6 +437,12 @@ var adminSystemView = Vue.extend({
         alert("添加成功");
         this.showSystem();
       }).bind(this));
+    },
+    cancelAddUser: function() {
+      this.showSystem();
+    },
+    cancelEditPassword: function() {
+      this.showSystem();
     }
   }
 });
