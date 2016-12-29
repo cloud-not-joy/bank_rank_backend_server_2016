@@ -48,9 +48,9 @@ var adminStaffView = Vue.extend({
         staff_number: '',
         department: '',
         staff_role: '',
-        standard: '',
-        previous_deposit: '',
-        current_deposit: '',
+        standard: 0,
+        previous_deposit: 0,
+        current_deposit: 0,
         accumulate: 0,
         consume: 0,
         current_integral: 0,
@@ -116,7 +116,9 @@ var adminStaffView = Vue.extend({
     checkNewStaff: function(_key) {
       var self = this;
       for (var item in self.newStaff) {
-        if (self.newStaff[item] === '' && item !== 'staff_id' && item !== _key) {
+        if (self.newStaff[item] === ''
+          && item !== 'staff_id'
+          && item !== _key) {
           return false;
         }
       }
@@ -180,6 +182,7 @@ var adminStaffView = Vue.extend({
       var _staff = $.extend({}, this.newStaff);
       delete _staff.can;
       delete _staff.goods;
+      delete _staff.current_integral;
       apiStaffUpdate(_staff, function(response) {
 
       });
@@ -195,12 +198,12 @@ var adminStaffView = Vue.extend({
         staff_number: '',
         department: '',
         staff_role: '',
-        standard: '',
-        previous_deposit: '',
-        current_deposit: '',
-        accumulate: '',
-        consume: '',
-        current_integral: '',
+        standard: 0,
+        previous_deposit: 0,
+        current_deposit: 0,
+        accumulate: 0,
+        consume: 0,
+        current_integral: 0,
         password: ''
       }
     },
@@ -241,6 +244,19 @@ var adminStaffView = Vue.extend({
       this.isAddStaff = false;
       this.isEditStaff = false;
       this.clearStaff();
+    },
+    downloadTrade: function() {
+      var startTime = '';
+      var endTime = '';
+      startTime = $(".start-time").val();
+      endTime = $(".end-time").val();
+      if (!startTime || !endTime) {
+        return alert("开始时间和结束时间不能为空");
+      }
+      if (startTime > endTime) {
+        return alert("开始时间不能大于结束时间");
+      }
+      window.open('../index.php/staff/getTradeByTime?startTime=' + startTime + '&endTime=' + endTime, '_parent');
     }
   },
   beforeRouteEnter: function (to, from, next) {
@@ -251,6 +267,13 @@ var adminStaffView = Vue.extend({
 
       //vm.staffs = defaultDatas.staffs;
       vm.getStaffs(vm.pageData.cur, 10);
+
+      setTimeout(function() {
+        $(".timepicker").datetimepicker({
+          format: 'YYYY-MM-DD HH:mm:ss',
+          // dayViewHeaderFormat: 'YYYY MMMM'
+        });
+      }, 200);
     });
   },
 });
@@ -271,9 +294,12 @@ var adminGoodsView = Vue.extend({
       isEditGoods: false,
       pageData: {
         cur: 1,
-        all: 8
+        all: 1
       }
     }
+  },
+  components:{
+    'vue-nav': Vnav
   },
   methods: {
     closeEditGoods: function() {

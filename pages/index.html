@@ -13,6 +13,8 @@
 
     <link rel="stylesheet" href="styles/main.css">
 
+    <link rel="stylesheet" href="styles/bootstrap-datetimepicker.css">
+
   </head>
   <body>
     <!--[if lt IE 10]>
@@ -136,14 +138,23 @@
       <div class="admin-staff-view">
         <div class="admin-stall-list" v-show="!isShowAddStaff">
           <p class="add-staff-p btn btn-primary btn-sm" v-on:click="showAddStaff()"><span class="glyphicon glyphicon-plus"></span><span class="add-staff">添加员工</span></p>
-          <p style="float: right;margin: 15px; position: relative">
+          <div style="float: right;margin: 15px; position: relative">
             <a href="../index.php/staff/export" target="_blank"><button type="button" class="btn btn-primary btn-sm">导出数据</button></a>
             <input type="file" class="import-staff-data" @change="uploadStaffData">
             <button type="button" class="btn btn-primary btn-sm">导入数据</button>
-          </p>
-          <div class="form-group" style="margin: 15px;">
-            <input type="text" class="form-control" placeholder="请输入员工号或者兑换码" v-model="searchKey" style="height: 33px;display: inline-block;">
-            <button class="btn btn-primary btn-sm" type="button" v-on:click="search()">搜索</button>
+          </div>
+          <div style="margin: 0px 15px; position: relative">
+            <div class="time-export">
+              <label>开始时间</label>
+              <input type='text' class="form-control" class='timepicker start-time' />
+              <label>结束时间</label>
+              <input type="text" class="form-control" class="timepicker end-time" >
+              <button type="button" class="btn btn-primary btn-sm" v-on:click="downloadTrade()">按时间导出兑换记录</button>
+            </div>
+            <div class="form-group" style="margin: 15px 0px;">
+              <input type="text" class="form-control" placeholder="请输入员工号或者兑换码" v-model="searchKey" style="height: 33px;display: inline-block;">
+              <button class="btn btn-primary btn-sm" type="button" v-on:click="search()">搜索</button>
+            </div>
           </div>
           <div class="staff-table">
             <table class="table-bordered">
@@ -177,7 +188,7 @@
                   <td>{{ itemStaff.current_integral }}</td>
                   <td>{{ itemStaff.can }}</td>
                   <td>
-                    <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)" v-show="appState.role==='超级管理员'">修改</span>
+                    <span class="operation-font edit" v-on:click="showEditStaff(itemStaff)">修改</span>
                     <span class="operation-font del" v-on:click="delStaff(itemStaff)">删除</span>
                   </td>
                 </tr>
@@ -227,7 +238,7 @@
               <label>角色：</label>
               <input type="text" v-model="newStaff.staff_role">
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="appState.role==='超级管理员'">
               <label>月末任务定额：</label>
               <input type="number" v-model="newStaff.standard">
             </div>
@@ -235,24 +246,22 @@
               <label>上期存款：</label>
               <input type="number" v-model="newStaff.previous_deposit">
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="appState.role==='超级管理员'">
               <label>本期存款：</label>
               <input type="number" v-model="newStaff.current_deposit">
             </div>
-            <div v-if="appState.role==='超级管理员'">
-              <div class="form-group">
+            <div class="form-group">
               <label>累计积分：</label>
               <input type="text" v-model="newStaff.accumulate">
-              </div>
-              <div class="form-group">
+            </div>
+            <div class="form-group">
               <label>已兑换积分：</label>
               <input type="text" v-model="newStaff.consume">
-              </div>
-              <div class="form-group">
-              <label>剩余积分：</label>
-              <input type="text" v-model="newStaff.current_integral">
-              </div>
             </div>
+              <!--<div class="form-group">-->
+              <!--<label>剩余积分：</label>-->
+              <!--<input type="text" v-model="newStaff.current_integral">-->
+              <!--</div>-->
             <div class="form-group">
               <label>初始密码：</label>
               <input type="text" v-model="newStaff.password">
@@ -494,6 +503,8 @@
 
     <!-- build:js scripts/plugins.js -->
     <script src="scripts/v/bootstrap.min.js"></script>
+    <script src="scripts/v/moment.js"></script>
+    <script src="scripts/v/bootstrap-datatimepicker.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/main.js -->
