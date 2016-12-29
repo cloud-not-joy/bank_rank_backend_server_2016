@@ -484,7 +484,7 @@ a:hover, a:focus {
   text-align: center;
 }
 .btn-div button {
-  display: inline-block !important;
+  display: inline-block;
   margin: 24px 24px 0 0 !important;
   width: 120px !important;
 }

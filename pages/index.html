@@ -239,18 +239,20 @@
               <label>本期存款：</label>
               <input type="number" v-model="newStaff.current_deposit">
             </div>
-            <!--<div class="form-group">-->
-              <!--<label>累计积分：</label>-->
-              <!--<input type="text" v-model="newStaff.accumulate">-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-              <!--<label>已兑换积分：</label>-->
-              <!--<input type="text" v-model="newStaff.consume">-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-              <!--<label>剩余积分：</label>-->
-              <!--<input type="text" v-model="newStaff.current_integral">-->
-            <!--</div>-->
+            <div v-if="appState.role==='超级管理员'">
+              <div class="form-group">
+              <label>累计积分：</label>
+              <input type="text" v-model="newStaff.accumulate">
+              </div>
+              <div class="form-group">
+              <label>已兑换积分：</label>
+              <input type="text" v-model="newStaff.consume">
+              </div>
+              <div class="form-group">
+              <label>剩余积分：</label>
+              <input type="text" v-model="newStaff.current_integral">
+              </div>
+            </div>
             <div class="form-group">
               <label>初始密码：</label>
               <input type="text" v-model="newStaff.password">
