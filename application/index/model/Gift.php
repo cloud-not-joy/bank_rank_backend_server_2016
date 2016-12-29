@@ -15,8 +15,9 @@ class Gift extends \think\Model{
 	}
 	/*修改礼物*/
 	public static function updateGift($param,$map){
-        $gift = new Gift();
-		return $gift->save($param,$map);
+        return Gift::where($map)->update($param);
+        //$gift = new Gift();
+		// return $gift->save($param,$map);
 	}
 	/**
 	 * [getOne description]
@@ -45,7 +46,6 @@ class Gift extends \think\Model{
             array_push($res,$tmp);
         } 
         return $res;
-    
     }
 	/*礼物列表*/
 	public static function getPageData($param,$field){

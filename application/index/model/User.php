@@ -2,8 +2,41 @@
 namespace app\index\model;
 
 use think\Input;
+use think\Session;
 
 class User extends \think\Model{
+    /**
+     * [delGift 删除管理员]
+     * @param  [type] $where [description]
+     * @return [type]        [description]
+     */
+    public static function delUser($where){
+        return User::destroy($where);
+    }
+    /**
+     * [getPageData fenye]
+     * @param  [type] $param [description]
+     * @param  [type] $field [description]
+     * @return [type]        [description]
+     */
+    public static function getPageData($param,$field){
+        // 查询数据集
+        $list = User::field($field)->limit($param['page'],$param['page_size'])->order('role', 'desc')->select();
+       // echo Gift::getLastSql();
+        $_list = array();
+        $count = User::count();
+        foreach ($list as $k => $val) {
+            $tmp = $val->toArray(); 
+            array_push($_list, $tmp);
+        }
+        $res['data']  = $_list;
+        $res['count'] = $count;
+        $res['page']  = $param['page']+1;
+        return $res;
+    }
+    public static function updateData($param,$map){
+        return User::where($map)->update($param);
+    }
     /*登录验证*/
     public static function login($name, $password){
 
@@ -26,6 +59,8 @@ class User extends \think\Model{
         if ($user) {
             unset($user["password"]);
             session("ext_user", $user);
+            // var_dump(session('ext_user'));
+            // die;
             return $user;
         }else{
             return false;

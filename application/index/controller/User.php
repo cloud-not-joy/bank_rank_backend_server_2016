@@ -6,6 +6,36 @@ use think\Request;
 use think\Session;
 
 class User extends Controller{
+  /**
+   * [userList 管理员列表]
+   * @return [type] [description]
+   */
+    public function  userList(){
+      $page = empty(input('request.page')) ? 1 : input('request.page');
+      $pageSize = input('request.page_size');
+      $data['page_size'] = empty($pageSize) ? 10 : $pageSize;
+      $data['page'] = ($page -1)*$data['page_size'];
+      $list = \app\index\model\User::getPageData($data);
+      return \app\index\model\Util::json(1, '管理员列表', $list);
+
+    }
+    /**
+     * [delUser 删除管理员]
+     * @return [type] [description]
+     */
+    public function delUser(){
+      $where['user_id'] = input('request.user_id');
+      $is = app\index\model\User::delUser($where);
+      if($is){
+        $data['code']=1;
+        $data['msg'] = '成功';
+      }else{
+        $data['code']=0;
+        $data['msg'] = '失败';
+      }
+      return json($data);
+
+    }
     /*后台页面*/
     public function index(){
        if (!session('?ext_user')) {
@@ -108,7 +138,7 @@ class User extends Controller{
     /*用户退出登录*/
     public function logout(){
       \app\index\model\User::logout();
-      if (!session('?ext_user')) {
+      if (!session('ext_user')) {
        $data['code'] = 1;
       }else{
         $data['code'] = 0;

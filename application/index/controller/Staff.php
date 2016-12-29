@@ -151,27 +151,42 @@ class Staff extends Controller{
      * @return [type] [description]
      */
     public function updateStaff(){
-    	$role = Session::get('ext_user.role');
-    	if($role != '超级管理员'){
-    		return \app\index\model\Util::json(-2, '只有超级管理员才能修改员工数据');
-    	}
-
     	$param = Request::instance()->param();
-
     	$param = array_filter($param);
-    	if( empty($param['staff_id'])  || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) || empty($param['standard']) || empty($param['current_deposit']) )
+    	if( empty($param['staff_id'])  || empty($param['staff_name']) || empty($param['staff_number']) || empty($param['department']) || empty($param['staff_role']) )
     	{
     		return \app\index\model\Util::json(-1, '参数不能为空');
     	}
+    	//条件
     	$map['staff_id'] = $param['staff_id'];
-    	unset($param['staff_id']);
 
+    	$role = Session::get('ext_user.role');
+    	if($role == '管理员'){
+    		unset($param['standard']);
+    		unset($param['current_deposit']);
+    	}else{
+    		//
+	    	$param['standard'] = $param['standard'];
+	    	$param['current_deposit'] = $param['current_deposit'];
+	    	$param['previous_deposit'] = $param['previous_deposit'];
+	    	$param['current_integral'] = ($param['current_deposit']-$param['standard'])/10000;
+	    	//修改积分等级
+	    	$upParam[] = $param;
+
+	    	$this->checkIntegarl($upParam);
+	    	
+	    	$param['accumulate'] = $param['consume'] + $param['current_integral'];
+    	}
+    	
         // 有密码才改密码 没有就不改
 		if (empty($param['password'])) {
 			unset($param['password']);
 		} else {
 			$param['password'] = md5($param['password']);
 		}
+		unset($param['staff_id']);
+		// var_dump($param);
+		// die;
 		$is = \app\index\model\StaffInfo::updateStaff($param,$map);
 
 		if($is){
@@ -444,8 +459,9 @@ class Staff extends Controller{
 			}else{
 				$tmp['level_id'] = 6;
 			}
-			$field = 'level_id,staff_id,is_right,evet_time';
+			$field = 'id,level_id,staff_id,is_right,evet_time';
 			$data = \app\index\model\Level::getOne($tmp,$field);
+			// var_dump($data);
 			//如果满足条件 无记录则添加记录 添加时间
 			if(empty($data)){
 

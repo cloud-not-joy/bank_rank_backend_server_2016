@@ -31,9 +31,7 @@ class StaffInfo extends \think\Model{
     }
     /*修改员工*/
     public static function updateStaff($param,$map){
-//        $staff = new StaffInfo();
         return StaffInfo::where($map)->update($param);
-//        return $staff->save($param,$map);
     }
 
 	/*管理员录入员工信息*/
