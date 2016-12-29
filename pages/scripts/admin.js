@@ -139,6 +139,7 @@ var adminStaffView = Vue.extend({
         for (var _key in this.newStaff) {
           this.newStaff[_key] = '';
         }
+        this.getStaffs(1, 10);
       }).bind(this));
     },
     // 显示员工兑换记录
