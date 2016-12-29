@@ -628,7 +628,7 @@ class Staff extends Controller{
 			return json($err);
 		}
 		$map['traff_time'] = array(array('egt',$startTime),array('elt',$endTime));
-		$field = 'staff_number,staff_name,gift_name,use_integral';
+		$field = 'staff_number,staff_name,gift_name,use_integral,traff_time';
 		$res = \app\index\model\Trade::getDatas($map,$field);
 		
 		$arr = array(array('员工号','姓名','礼物名','所用积分'));
@@ -638,6 +638,7 @@ class Staff extends Controller{
 			$tmp[] = $v['staff_name'];
 			$tmp[] = $v['gift_name'];
 			$tmp[] = $v['use_integral'];
+			$tmp[] = $v['traff_time'];
 			$arr[$k+1] = $tmp;
 		}
 		$this->doexport($arr , $path = './exchange.xlsx');
