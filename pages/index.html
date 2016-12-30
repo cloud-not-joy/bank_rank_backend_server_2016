@@ -242,7 +242,7 @@
               <label>月末任务定额：</label>
               <input type="number" v-model="newStaff.standard">
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="appState.role==='超级管理员'">
               <label>上期存款：</label>
               <input type="number" v-model="newStaff.previous_deposit">
             </div>
@@ -250,11 +250,11 @@
               <label>本期存款：</label>
               <input type="number" v-model="newStaff.current_deposit">
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="appState.role==='超级管理员'">
               <label>累计积分：</label>
               <input type="text" v-model="newStaff.accumulate">
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="appState.role==='超级管理员'">
               <label>已兑换积分：</label>
               <input type="text" v-model="newStaff.consume">
             </div>
