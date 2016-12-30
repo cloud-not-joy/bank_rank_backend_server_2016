@@ -24,6 +24,7 @@ class Trade extends \think\Model{
 	 */
 	public static function getOne($where, $field){
         $gift = Trade::field($field)->where($where)->find();
+        //echo Trade::getLastSql();
         if(!empty($gift)){
             $gift = $gift->toArray();
             return $gift;

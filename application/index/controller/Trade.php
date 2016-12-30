@@ -17,6 +17,18 @@ class Trade extends Controller{
   * @return \think\response\Json
   */
  public function  getCode(){
+  //每月只能兑换一次
+  $limit['staff_id'] = Session::get('ext_user.staff_id');
+  $beginDate = date("Y-m-d H:i:s",mktime(0, 0 , 0,date("m"),1,date("Y")));
+  $endDate = date("Y-m-d H:i:s",mktime(23,59,59,date("m"),date("t"),date("Y")));
+  $limit['traff_time'] = array(array('egt',$beginDate),array('elt', $endDate)) ;
+  $is_limit = \app\index\model\Trade::getOne($limit,'trade_id');
+  if($is_limit){
+    $err['code'] = -2;
+    $err['msg']  = '每月只能兑换一次！';
+    return json($err);
+  }
+  //判断是否选择礼品
   //需要兑换的礼品的g_id
   $_map['g_id'] = input('request.gid');
   $field = 'level_id,integral,gift_name';
