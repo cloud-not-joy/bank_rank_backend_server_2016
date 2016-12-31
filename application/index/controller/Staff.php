@@ -353,9 +353,10 @@ class Staff extends Controller{
 		       		$arrData[$k]['staff_role'] = $v[3];
 		       		$arrData[$k]['standard']  = $v[4];
 		       		$arrData[$k]['current_deposit'] = $v[5];
+		       		$arrData[$k]['current_integral'] = ($v[5]-$v[4])/10000;
+		       		$arrData[$k]['accumulate'] = $arrData[$k]['current_integral'];
 		       		$arrData[$k]['add_time'] = date("Y-m H:i:s",time());
-		       	}
-		    
+		       	}  
 			}
        	}
 
@@ -626,7 +627,7 @@ class Staff extends Controller{
 		$field = 'staff_number,staff_name,gift_name,use_integral,traff_time';
 		$res = \app\index\model\Trade::getDatas($map,$field);
 		
-		$arr = array(array('员工号','姓名','礼物名','所用积分'));
+		$arr = array(array('员工号','姓名','礼物名','所用积分','兑换时间'));
 		foreach ($res as $k => $v) {
 			$tmp = array();
 			$tmp[] = $v['staff_number'];

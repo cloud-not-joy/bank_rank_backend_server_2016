@@ -71,8 +71,8 @@ class Trade extends Controller{
     $level_where['staff_id'] = Session::get('ext_user.staff_id');
     $level_param['evet_time'] = 0;
     $level_param['is_right'] = 0;
-
-    for ($i = $temp['level_id']+1; $i <= $where['level_id']; $i++) {
+    
+    for ($i = $temp['level_id'] ; $i <= $where['level_id']; $i++) {
       $level_where['level_id'] = $i;
       $iis = \app\index\model\Level::updateData($level_param, $level_where);
     }
@@ -83,6 +83,7 @@ class Trade extends Controller{
     $data['staff_number'] = Session::get('ext_user.staff_number');
     $data['gift_name'] = $gift_name;
     $data['use_integral'] = $integral;
+    $data['traff_time'] = date("Y-m-d H:i:s",time());
     $is = \app\index\model\Trade::addData($data);
 
     if ($is) {
