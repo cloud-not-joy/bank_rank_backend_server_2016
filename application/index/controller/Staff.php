@@ -238,6 +238,7 @@ class Staff extends Controller{
 	         $path = '.'.DS . 'public'.DS.'uploads'.DS.$info->getSaveName();
 	         //var_dump($path);
 	         $data = $this->doImport($path);
+	        // unlink($path);
 	    }else{
 	        // 上传失败获取错误信息
 	        $data['code'] = 0;
