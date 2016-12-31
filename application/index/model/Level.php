@@ -4,6 +4,15 @@ use think\Input;
 
 class Level extends \think\Model{
 
+    public static function delData($where){
+        return Level::destroy($where);
+    }
+    /**
+     * [updateData 跟新表]
+     * @param  [type] $data [description]
+     * @param  [type] $map  [description]
+     * @return [type]       [description]
+     */
     public static function updateData($data,$map){
         $level = new Level();
         $res = $level->allowField(true)->save($data,$map);

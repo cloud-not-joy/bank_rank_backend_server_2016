@@ -247,7 +247,7 @@ class Staff extends Controller{
 	   return json($data); 
 	}
 	/*员工数据信息导入*/
-	public function doImport($path="./public/uploads/20161227/9c1e6eaa38995c7a326d99f97d9a288e.xlsx"){
+	public function doImport($path=""){
 		//var_dump($path);
 		$res = Loader::import('PHPExcel.PHPExcel.IOFactory',EXTEND_PATH);
 		
@@ -337,7 +337,7 @@ class Staff extends Controller{
 			       		$arrData[$i]['staff_role'] = $v[3];
 			       		$arrData[$i]['standard']  = $v[4];
 			       		$arrData[$i]['current_deposit'] = $v[5];
-			       		$arrData[$i]['add_time'] = date("Y-m H:i:s",time());
+			       		$arrData[$i]['add_time'] = date("Y-m-d H:i:s",time());
 			       		$i++;
 	       			}else{
 	       				$standard[$v[1]]['current'] = $v[5];
@@ -355,7 +355,7 @@ class Staff extends Controller{
 		       		$arrData[$k]['current_deposit'] = $v[5];
 		       		$arrData[$k]['current_integral'] = ($v[5]-$v[4])/10000;
 		       		$arrData[$k]['accumulate'] = $arrData[$k]['current_integral'];
-		       		$arrData[$k]['add_time'] = date("Y-m H:i:s",time());
+		       		$arrData[$k]['add_time'] = date("Y-m-d H:i:s",time());
 		       	}  
 			}
        	}
@@ -381,9 +381,11 @@ class Staff extends Controller{
 	    			$accumulate['previous_deposit'] = $v['current_deposit'];
 	    			$accumulate['current_deposit'] = $standard[$k]['current'];
 	    			$accumulate['standard'] = $standard[$k]['standard'];
+	    			$accumulate['add_time'] = date("Y-m-d H:i:s",time());
 	    			$updateArr[]=$accumulate;
 	    		}
-	    			//print_r($updateArr);
+	    			// print_r($updateArr);
+	    			// die;
 
 
 	    		$isUpdate = \app\index\model\StaffInfo::updateAll($updateArr);
@@ -439,6 +441,11 @@ class Staff extends Controller{
 			}
 			
 			if($integer < 10){
+				$cun =  \app\index\model\Level::getOne($tmp,'id');
+				//如果存在，本期少于10积分之前的兑换标准表中关于他的全删除
+				if($cun){
+					\app\index\model\Level::delData($tmp);
+				}
 				continue;
 			}
 			
@@ -485,6 +492,7 @@ class Staff extends Controller{
 				if($preTime > $data['evet_time']){
 					$map['is_right'] = 1;
 					$map['id']       = $data['id'];
+					$tmp['min_integral'] = $integer;
 					$is = \app\index\model\Level::updateOne($map);
 					return $is;
 				}
