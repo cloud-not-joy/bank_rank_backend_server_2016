@@ -16,6 +16,9 @@ $(document).on("ajaxSend", function(){
 });
 
 function errorAlert(err) {
+  if (err && err.readyState === 0) {
+    return;
+  }
   if (typeof err !== 'string') {
     err = JSON.stringify(err);
   }
