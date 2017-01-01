@@ -16,10 +16,16 @@ $(document).on("ajaxSend", function(){
 });
 
 function errorAlert(err) {
+  if (typeof err !== 'string') {
+    err = JSON.stringify(err);
+  }
   alert(err);
 }
 
 function tipsAlert(tips) {
+  if (typeof tips !== 'string') {
+    tips = JSON.stringify(tips);
+  }
   alert(tips)
 }
 
@@ -73,10 +79,17 @@ var makeFile = function(url) {
 
 var paseJson = function(response, callback) {
   if (typeof response === 'string') {
-    response = JSON.parse(response);
+    try {
+      response = JSON.parse(response);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  if (typeof response === 'string') {
+    return errorAlert(response);
   }
   if (response.code != 1) {
-    return errorAlert(response.msg);
+    return errorAlert(msg);
   }
   callback(response.data);
 }
