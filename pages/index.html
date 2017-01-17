@@ -139,7 +139,7 @@
         <div class="admin-stall-list" v-show="!isShowAddStaff">
           <p class="add-staff-p btn btn-primary btn-sm" v-on:click="showAddStaff()"><span class="glyphicon glyphicon-plus"></span><span class="add-staff">添加员工</span></p>
           <div style="float: right;margin: 15px; position: relative">
-            <a href="../index.php/staff/export" target="_blank"><button type="button" class="btn btn-primary btn-sm">导出数据</button></a>
+            <a href="../index.php/staff/export"><button type="button" class="btn btn-primary btn-sm">导出数据</button></a>
             <input type="file" class="import-staff-data" @change="uploadStaffData">
             <button type="button" class="btn btn-primary btn-sm">导入数据</button>
           </div>
@@ -283,7 +283,7 @@
                   兑换记录
                 </p>
                 <div class="alert-content staff-exchange-list-div">
-                  <ul class="exchange-history-list">
+                  <ul class="exchange-history-list" style="overflow-y:auto;">
                     <li>
                       <span class="title-name">商品名称</span>
                       <span class="title-name">消耗积分</span>
@@ -440,7 +440,7 @@
                   兑换记录
                 </p>
                 <div class="alert-content">
-                 <ul class="exchange-history-list">
+                 <ul class="exchange-history-list" style="overflow-y:auto;">
                   <li>
                     <span class="name">商品名称</span>
                     <span class="rank">消耗积分</span>

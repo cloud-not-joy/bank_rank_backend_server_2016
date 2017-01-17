@@ -38,7 +38,7 @@ class StaffInfo extends \think\Model{
 	public static function addStaff($param){
 		$staff = new StaffInfo($param);
         $res = $staff->allowField(true)->save(); 
-        return $res;       
+        return $staff->staff_id;       
 	}
     /**
      * [员工 获取指定条件下某条员工数据信息]

@@ -23,6 +23,7 @@ function errorAlert(err) {
     err = JSON.stringify(err);
   }
   alert(err);
+ // window.location.reload();
 }
 
 function tipsAlert(tips) {
@@ -92,7 +93,7 @@ var paseJson = function(response, callback) {
     return errorAlert(response);
   }
   if (response.code != 1) {
-    return errorAlert(msg);
+    return errorAlert(response.msg);
   }
   callback(response.data);
 }

@@ -63,6 +63,7 @@ var staffView = Vue.extend({
     },
     listenStaffPage: function(page) {
       this.currentPage = page;
+      this.pageData.cur = page;
       this.getGoodsLists();
     },
     exchange: function(gift) {

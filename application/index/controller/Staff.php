@@ -209,10 +209,24 @@ class Staff extends Controller{
     	//查找本月数据是否存在条件
     	$where['staff_number'] = $param['staff_number'];
     	$current = \app\index\model\StaffInfo::getOne($where);
+    	if(empty($param['password'])){
+    		$param['password'] = '123456';
+    	}
     	$param['password'] = md5($param['password']);
     	if(!$current){
-	    	$_is = \app\index\model\StaffInfo::addStaff($param);
-	    	if($_is){
+    		if($param['current_deposit'] > $param['standard']){
+	    		$param['current_integral'] = ($param['current_deposit'] - $param['standard'])/10000;
+	    		$param['accumulate'] = $param['current_integral'] + $param['consume'];
+	    	}
+	    	$staff_id = \app\index\model\StaffInfo::addStaff($param);
+	    	if($staff_id){
+	    		//判断level信息
+	    		if( $param['current_deposit'] > $param['standard']){
+					$arr[] = $param;
+					$arr[0]['staff_id'] = $staff_id;
+					$this->checkIntegarl($arr,true);
+	    		}
+
 	    		$data['code'] = 1;
 	    		$data['msg']  = '添加用户信息成功!';
 	    	}else{
@@ -308,7 +322,7 @@ class Staff extends Controller{
 	       	//0、如果导入有新数据则是新增员工信息
 	       	if(count($staff_number) > count($pre_number)){
 	       		$flag = 1;
-	       		$dif_number = array_diff($staff_number - $pre_number);
+	       		$dif_number = array_diff($staff_number , $pre_number);
 	       	}
 	    }else{
 	    	$flag = 2;
@@ -465,7 +479,6 @@ class Staff extends Controller{
 			}
 			$field = 'id,level_id,staff_id,is_right,evet_time';
 			$data = \app\index\model\Level::getOne($tmp,$field);
-			// var_dump($data);
 			//如果满足条件 无记录则添加记录 添加时间
 			if(empty($data)){
 
