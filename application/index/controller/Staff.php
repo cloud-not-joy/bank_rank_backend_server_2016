@@ -245,6 +245,19 @@ class Staff extends Controller{
 	 * @return [type] [description]
 	 */
 	public function import(){
+		//判断本月是否数据导入
+		// $path = "date.txt";
+		// $month = date("m",time());
+		// if(file_exists($path)){
+		// 	$_month = file_get_contents($path);
+		// 	if($month == trim($_month)){
+		// 		$re['code'] = -1;
+		// 		$re['msg']  = '本月数据已经存在';
+		// 		return json($re);
+		// 	}
+		// }
+		// file_put_contents($path, $month);
+		
 		$file = request()->file('image');
 	    // 移动到框架应用根目录/public/uploads/ 目录下
 	    $info = $file->validate(['ext'=>'xlsx'])->move(ROOT_PATH . 'public' . DS . 'uploads');
@@ -617,6 +630,7 @@ class Staff extends Controller{
 		$fp=fopen($file_path,"r"); 
 		$file_size=filesize($file_path); 
 		//下载文件需要用到的头 
+		ob_end_clean();
 		Header("Content-type: application/octet-stream"); 
 		Header("Accept-Ranges: bytes"); 
 		Header("Accept-Length:".$file_size); 
@@ -630,6 +644,8 @@ class Staff extends Controller{
 			echo $file_con; 
 		} 
 		fclose($fp); 
+		ob_flush();
+		flush();
 
     }
 
